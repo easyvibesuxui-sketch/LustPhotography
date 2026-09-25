@@ -7,7 +7,9 @@ export type Scene = "cypress" | "villa" | "riviera" | "linen" | "curve" | "blind
 export type Lockup = "bodoni" | "italiana" | "script" | "condensed" | "italic" | "the" | "marker" | "bungee" | "anton" | "shrikhand" | "tall" | "josefin";
 export type Badge = "TRENDING" | "NEW" | "FREE";
 
-export type Art = { scene: Scene; tone: Tone; src?: string; video?: string; poster?: string };
+import { VIDEO_TIER, type Tier } from "./tiers";
+
+export type Art = { scene: Scene; tone: Tone; src?: string; video?: string; poster?: string; tier?: Tier };
 
 export type Chapter = { t: string; label: string };
 
@@ -56,7 +58,7 @@ export type Collection = Art & { slug: string; title: string; subtitle?: string 
 // With no base in a production build, items keep their SVG placeholder art.
 const MEDIA = process.env.NEXT_PUBLIC_MEDIA_BASE ?? (process.env.NODE_ENV === "development" ? "/media" : "");
 const img = (n: number) => (MEDIA ? `${MEDIA}/img/i${String(n).padStart(2, "0")}.webp` : undefined);
-const vid = (id: string) => (MEDIA ? { video: `${MEDIA}/vid/${id}.mp4`, poster: `${MEDIA}/vid/${id}.jpg` } : {});
+const vid = (id: string) => ({ tier: VIDEO_TIER[id], ...(MEDIA ? { video: `${MEDIA}/vid/${id}.mp4`, poster: `${MEDIA}/vid/${id}.jpg` } : {}) });
 
 export const categories: Category[] = [
   { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", src: img(4) },
@@ -247,6 +249,8 @@ export const packages = [
 ];
 
 export const hero = vid("f02");
+
+export { TIER_LABEL, TIER_RANK, canAccess, type Tier } from "./tiers";
 
 export const museBySlug = (slug: string) => muses.find((m) => m.slug === slug);
 export const reelBySlug = (slug: string) => reels.find((r) => r.slug === slug);

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ArtFrame from "./ArtFrame";
 import { stills } from "@/lib/data";
+import { post } from "@/lib/auth";
 
 const cover = stills.find((s) => s.slug === "laughing-tide");
 import { lockScroll } from "./SmoothScroll";
@@ -95,13 +96,16 @@ export default function NewsletterModal() {
               ) : (
                 <form
                   className="mt-8"
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    if (agree) setSent(true);
+                    if (!agree) return;
+                    const email = new FormData(e.currentTarget).get("email");
+                    const res = await post("/api/subscribe", { email, source: "popup" });
+                    if (!res.error) setSent(true);
                   }}
                 >
                   <label htmlFor="nl-email" className="sr-only">Email address</label>
-                  <input id="nl-email" type="email" required placeholder="Enter your email address" className="w-full rounded-sm border border-ivory/20 bg-forest px-4 py-4 text-sm placeholder:text-parchment/50 focus:border-brass focus:outline-none" />
+                  <input id="nl-email" name="email" type="email" required placeholder="Enter your email address" className="w-full rounded-sm border border-ivory/20 bg-forest px-4 py-4 text-sm placeholder:text-parchment/50 focus:border-brass focus:outline-none" />
                   <label className="mt-5 flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-parchment/80">
                     <button type="button" role="switch" aria-checked={agree} onClick={() => setAgree((a) => !a)} className={`relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition ${agree ? "bg-brass" : "bg-ivory/25"}`}>
                       <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-ivory transition-all ${agree ? "left-[18px]" : "left-0.5"}`} />

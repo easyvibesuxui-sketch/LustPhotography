@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { stills as allStills, type Reel } from "@/lib/data";
+import { canAccess, stills as allStills, type Reel } from "@/lib/data";
+import { useMe } from "@/lib/auth";
+import { LockOverlay } from "./Lock";
 import ArtFrame from "./ArtFrame";
 import Lightbox from "./Lightbox";
 import { PauseIcon, PlayIcon } from "./Icons";
@@ -17,6 +19,8 @@ export default function Player({ reel }: { reel: Reel }) {
   const [box, setBox] = useState<number | null>(null);
   const bar = useRef<HTMLDivElement>(null);
   const short = reel.kind === "short";
+  const { me } = useMe();
+  const locked = !canAccess(me?.tier, reel.tier);
 
   const wrap = useRef<HTMLDivElement>(null);
   const el = () => wrap.current?.querySelector("video") ?? null;
@@ -45,7 +49,7 @@ export default function Player({ reel }: { reel: Reel }) {
       v.removeEventListener("timeupdate", on);
       v.removeEventListener("ended", end);
     };
-  }, []);
+  }, [locked]);
 
   const seek = (s: number) => {
     const next = Math.max(0, Math.min(reel.seconds, s));
@@ -72,10 +76,11 @@ export default function Player({ reel }: { reel: Reel }) {
       <div ref={wrap} className={`${theatre ? "" : "gutter"} transition-all duration-700`}>
         <div className={`media mx-auto ${short ? "aspect-[9/16] max-h-[82vh]" : `aspect-video ${theatre ? "!rounded-none" : ""}`}`} data-playing={playing} data-revealed="true">
           <div className="art">
-            <ArtFrame {...reel} seed={reel.slug} alt={reel.title} />
+            <ArtFrame {...(locked ? { ...reel, video: undefined, src: reel.poster } : reel)} seed={reel.slug} alt={reel.title} key={locked ? "locked" : "open"} />
           </div>
           <div className="leak" />
-          <button className="absolute inset-0 z-10 flex items-center justify-center" onClick={() => setPlaying((p) => !p)} aria-label={playing ? "Pause" : "Play"} data-cursor={playing ? "Pause" : "Play"}>
+          {locked && reel.tier && <LockOverlay need={reel.tier} signedIn={!!me} />}
+          <button className="absolute inset-0 z-10 flex items-center justify-center" onClick={() => !locked && setPlaying((p) => !p)} aria-label={playing ? "Pause" : "Play"} data-cursor={playing ? "Pause" : "Play"}>
             {!playing && <span className="flex h-20 w-20 items-center justify-center rounded-full border border-brass/60 bg-forest/60 pl-1 text-ivory backdrop-blur md:h-24 md:w-24"><PlayIcon size={26} /></span>}
           </button>
           <span className="pill pill-ghost absolute left-3 top-3 z-20">AI-generated</span>

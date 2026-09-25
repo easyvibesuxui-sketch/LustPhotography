@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { Reel } from "@/lib/data";
+import { canAccess, type Reel } from "@/lib/data";
+import { useMe } from "@/lib/auth";
+import { LockPill } from "./Lock";
 import ArtFrame from "./ArtFrame";
 import PosterTitle from "./PosterTitle";
 
@@ -29,6 +31,10 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
   const timer = useRef<number | undefined>(undefined);
   const video = useRef<HTMLDivElement>(null);
   const { revealed, consume } = useVeilReveal();
+  const { me } = useMe();
+  const locked = !canAccess(me?.tier, reel.tier);
+  // Locked reels preview their poster only; the video itself is gated server-side.
+  const art = locked ? { ...reel, video: undefined, src: reel.poster } : reel;
 
   const start = () => {
     window.clearTimeout(timer.current);
@@ -88,7 +94,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && stop()}
     >
       <div ref={video} className="art">
-        <ArtFrame {...reel} seed={reel.slug} alt={reel.title} />
+        <ArtFrame {...art} seed={reel.slug} alt={reel.title} />
       </div>
       <div className="leak" />
       <div className={`absolute inset-0 z-[3] transition-colors duration-500 ${playing ? "bg-black/10" : "bg-black/0"}`} />
@@ -101,17 +107,24 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
             <>
               <span className="pill pill-NEW">★ {reel.rating.toFixed(1)}</span>
               <span className="pill pill-ghost">{reel.duration}</span>
+              {locked && reel.tier && <LockPill need={reel.tier} />}
             </>
           ) : short ? (
-            <span className="pill pill-wine">
-              <span className="font-bodoni text-[0.85rem] font-bold normal-case tracking-tight">LP</span>Shorts
-            </span>
-          ) : (
-            reel.badges.map((b) => (
-              <span key={b} className={`pill pill-${b}`}>
-                {b}
+            <>
+              <span className="pill pill-wine">
+                <span className="font-bodoni text-[0.85rem] font-bold normal-case tracking-tight">LP</span>Shorts
               </span>
-            ))
+              {locked && reel.tier && <LockPill need={reel.tier} />}
+            </>
+          ) : (
+            <>
+              {reel.badges.map((b) => (
+                <span key={b} className={`pill pill-${b}`}>
+                  {b}
+                </span>
+              ))}
+              {locked && reel.tier && <LockPill need={reel.tier} />}
+            </>
           )}
         </div>
         <div className="relative">

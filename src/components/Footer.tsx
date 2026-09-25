@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { post } from "@/lib/auth";
 
 const slogan = "La Dolce Lussuria";
 
@@ -79,9 +80,12 @@ export default function Footer() {
         ))}
         <form
           className="rounded-md border border-brass/20 bg-bottle/40 p-6"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            if (agree) setSent(true);
+            if (!agree) return;
+            const email = new FormData(e.currentTarget).get("email");
+            const res = await post("/api/subscribe", { email, source: "footer" });
+            if (!res.error) setSent(true);
           }}
         >
           <p className="font-ui text-2xl font-bold leading-tight">
@@ -94,7 +98,7 @@ export default function Footer() {
           ) : (
             <>
               <label className="sr-only" htmlFor="footer-email">Email address</label>
-              <input id="footer-email" type="email" required placeholder="Your email address" className="mt-5 w-full rounded-sm border border-ivory/20 bg-forest/80 px-4 py-3.5 text-sm placeholder:text-parchment/50 focus:border-brass focus:outline-none" />
+              <input id="footer-email" name="email" type="email" required placeholder="Your email address" className="mt-5 w-full rounded-sm border border-ivory/20 bg-forest/80 px-4 py-3.5 text-sm placeholder:text-parchment/50 focus:border-brass focus:outline-none" />
               <label className="mt-3 flex items-center gap-2.5 text-xs text-parchment/80">
                 <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="h-4 w-4 accent-[var(--color-brass)]" required />
                 I accept the <a href="#" className="underline underline-offset-2">terms and conditions</a>.

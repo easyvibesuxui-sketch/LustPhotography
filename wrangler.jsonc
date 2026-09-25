@@ -1,10 +1,18 @@
 {
-  // Cloudflare Workers static-assets deploy of the exported site (`out/`).
-  // Build with NEXT_PUBLIC_MEDIA_BASE=/media so local public/media ships alongside.
+  // Worker: static site from `out/`, auth API on D1, tier-gated media from R2.
+  // Deploy with `npm run deploy:cf`.
   "name": "lust-photography",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./out",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*", "/media/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "lust-db", "database_id": "22adad90-e68b-40cf-b015-8ece3f011367" }
+  ],
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "lust-media" }],
+  "observability": { "enabled": true }
 }

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { museBySlug, type Reel } from "@/lib/data";
+import { canAccess, museBySlug, type Reel } from "@/lib/data";
+import { useMe } from "@/lib/auth";
+import { LockOverlay } from "./Lock";
 import ArtFrame from "./ArtFrame";
 import { lockScroll } from "./SmoothScroll";
 import { ArrowDownIcon, ArrowUpIcon, CloseIcon, HeartIcon, ShareIcon } from "./Icons";
@@ -11,6 +13,7 @@ import { ArrowDownIcon, ArrowUpIcon, CloseIcon, HeartIcon, ShareIcon } from "./I
 export default function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: number; onClose: () => void }) {
   const box = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(start);
+  const { me } = useMe();
   const [liked, setLiked] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -60,14 +63,16 @@ export default function ReelViewer({ reels, start, onClose }: { reels: Reel[]; s
         {reels.map((r, i) => {
           const muse = museBySlug(r.muses[0]);
           const on = i === active;
+          const locked = !canAccess(me?.tier, r.tier);
           return (
             <section key={r.slug} data-i={i} className="flex h-[100dvh] snap-start snap-always items-center justify-center py-4 md:py-8">
               <div className="media relative aspect-[9/16] h-full max-h-full max-w-full" data-playing={on} data-revealed="true">
                 <div className="art">
-                  <ArtFrame {...r} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
+                  <ArtFrame {...(locked ? { ...r, video: undefined, src: r.poster } : r)} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
                 </div>
                 <div className="leak" />
                 <div className="scrim-b absolute inset-0 z-[3]" />
+                {locked && r.tier && <LockOverlay need={r.tier} signedIn={!!me} />}
                 <div className="absolute inset-x-3 top-3 z-10 h-[3px] overflow-hidden rounded bg-ivory/20">
                   {on && <div key={r.slug} className="h-full origin-left bg-ivory" style={{ animation: `progress ${r.seconds}s linear forwards` }} />}
                 </div>

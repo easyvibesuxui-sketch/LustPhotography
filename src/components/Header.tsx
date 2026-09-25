@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Magnetic from "./Magnetic";
+import { useMe } from "@/lib/auth";
 
 const nav = [
   ["Shorts", "/#shorts"],
@@ -10,6 +11,7 @@ const nav = [
   ["Muses", "/#muses"],
   ["Collections", "/#collections"],
   ["Fantasies", "/#fantasies"],
+  ["Membership", "/pricing/"],
   ["For Creators", "/#creators"],
 ];
 
@@ -19,6 +21,7 @@ export default function Header() {
   const [solid, setSolid] = useState(false);
   const [menu, setMenu] = useState(false);
   const [veil, setVeil] = useState(false);
+  const { me } = useMe();
 
   useEffect(() => {
     const on = () => setSolid(window.scrollY > 40);
@@ -72,9 +75,9 @@ export default function Header() {
           </Link>
           <div className="hidden sm:block">
             <Magnetic>
-              <button className="btn btn-wine !px-5 !py-2.5" onClick={openJoin}>
-                Join
-              </button>
+              <Link href="/account/" className="btn btn-wine !px-5 !py-2.5">
+                {me ? "Account" : "Join"}
+              </Link>
             </Magnetic>
           </div>
           <button className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden" onClick={() => setMenu((m) => !m)} aria-expanded={menu} aria-label="Menu">
@@ -92,7 +95,7 @@ export default function Header() {
             </Link>
           ))}
           <div className="mt-auto flex gap-3">
-            <button className="btn btn-wine flex-1" onClick={() => (setMenu(false), openJoin())}>Join free</button>
+            <Link href="/account/" className="btn btn-wine flex-1" onClick={() => setMenu(false)}>{me ? "Account" : "Join free"}</Link>
             <button className="btn btn-brass" onClick={toggleVeil} aria-pressed={veil}>Veil {veil ? "on" : "off"}</button>
           </div>
         </nav>
