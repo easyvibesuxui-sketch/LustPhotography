@@ -10,11 +10,27 @@
   --color-wine: #9e3b2e;
   --color-wine-hot: #b5463a;
 
-  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  /* Retro Italian poster accents */
+  --color-limone: #f4d35e;
+  --color-verde: #8fd16a;
+  --color-rosa: #f5a3b7;
+  --color-lilla: #d9bdf7;
+  --color-cielo: #9cc9ec;
+  --color-aperol: #f28c38;
+
+  --font-display: var(--font-instrument), Georgia, serif;
+  --font-hero: var(--font-dmserif), Georgia, serif;
+  --font-ui: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-marker: var(--nf-marker), cursive;
+  --font-bungee: var(--nf-bungee), sans-serif;
+  --font-anton: var(--nf-anton), Impact, sans-serif;
+  --font-shrikhand: var(--nf-shrikhand), serif;
+  --font-shoulders: var(--nf-shoulders), sans-serif;
+  --font-josefin: var(--nf-josefin), sans-serif;
   --font-poster: var(--font-italiana), serif;
-  --font-bodoni: var(--font-bodoni), "Bodoni Moda", serif;
+  --font-bodoni: var(--nf-bodoni), "Bodoni Moda", serif;
   --font-script: var(--font-pinyon), cursive;
-  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-sans: var(--font-roboto), system-ui, sans-serif;
   --font-condensed: var(--font-bebas), Impact, sans-serif;
 
   --ease-film: cubic-bezier(0.22, 1, 0.36, 1);
@@ -75,10 +91,10 @@ body {
 @layer components {
 /* ---------- Type helpers ---------- */
 .label {
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-brass);
 }
@@ -95,29 +111,31 @@ body {
   gap: 0.35em;
   border-radius: 999px;
   padding: 0.28em 0.8em;
-  font-size: 0.66rem;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1.2;
 }
-.pill-TRENDING { background: var(--color-brass); color: #1b140a; }
+.pill-TRENDING { background: var(--color-lilla); color: #1b1024; }
 .pill-NEW { background: var(--color-ivory); color: #1b140a; }
-.pill-FREE { background: var(--color-moss); color: var(--color-ivory); }
+.pill-FREE { background: var(--color-verde); color: #0d1a08; }
 .pill-wine { background: var(--color-wine); color: var(--color-ivory); }
 .pill-ghost { background: rgba(14, 26, 19, 0.7); color: var(--color-ivory); backdrop-filter: blur(6px); border: 1px solid rgba(241, 232, 214, 0.15); }
 
 /* ---------- Buttons ---------- */
 .btn {
+  font-family: var(--font-ui);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.6em;
   border-radius: 999px;
   padding: 0.95em 1.8em;
-  font-size: 0.78rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
   will-change: transform;
@@ -190,7 +208,14 @@ body {
   100% { transform: translateX(60%); }
 }
 
-.scrim-b { background: linear-gradient(to top, rgba(8, 14, 10, 0.92) 0%, rgba(8, 14, 10, 0.35) 45%, transparent 75%); }
+.scrim-b { background: linear-gradient(to top, rgba(6, 8, 7, 0.95) 0%, rgba(6, 8, 7, 0.7) 22%, rgba(6, 8, 7, 0.25) 50%, transparent 72%); }
+/* Poster overlay: vignette + bottom scrim, like a film one-sheet */
+.scrim-poster {
+  background:
+    linear-gradient(to top, rgba(5, 7, 6, 0.96) 0%, rgba(5, 7, 6, 0.75) 26%, rgba(5, 7, 6, 0.15) 58%, transparent 75%),
+    linear-gradient(to bottom, rgba(5, 7, 6, 0.45) 0%, transparent 22%),
+    radial-gradient(ellipse at 50% 40%, transparent 50%, rgba(0, 0, 0, 0.35) 100%);
+}
 
 }
 

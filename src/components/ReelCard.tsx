@@ -92,7 +92,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
       </div>
       <div className="leak" />
       <div className={`absolute inset-0 z-[3] transition-colors duration-500 ${playing ? "bg-black/10" : "bg-black/0"}`} />
-      <div className="scrim-b absolute inset-0 z-[3]" />
+      <div className={`${short ? "scrim-b" : "scrim-poster"} absolute inset-0 z-[3]`} />
 
       {/* Top bar: badges at rest, rating + duration + menu while playing */}
       <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-2 p-2.5 md:p-3">
@@ -104,7 +104,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
             </>
           ) : short ? (
             <span className="pill pill-wine">
-              <span className="font-bodoni text-[0.8rem] font-bold normal-case tracking-tight">LP</span>Shorts
+              <span className="font-bodoni text-[0.85rem] font-bold normal-case tracking-tight">LP</span>Shorts
             </span>
           ) : (
             reel.badges.map((b) => (
@@ -142,7 +142,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
       {/* Title */}
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-[6] p-3 md:p-4 ${short ? "" : "pr-16"}`}>
         {short ? (
-          <p className="font-display text-xl font-medium leading-tight md:text-2xl">{reel.title}</p>
+          <p className="font-sans text-base font-bold leading-snug md:text-lg">{reel.title}</p>
         ) : (
           <PosterTitle title={reel.title} lockup={reel.lockup} />
         )}

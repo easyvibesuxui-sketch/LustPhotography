@@ -3,7 +3,7 @@
 
 export type Tone = "dusk" | "terracotta" | "olive" | "sand" | "forest" | "wine" | "noir";
 export type Scene = "cypress" | "villa" | "riviera" | "linen" | "curve" | "blinds" | "wine" | "road";
-export type Lockup = "bodoni" | "italiana" | "script" | "condensed" | "italic" | "the";
+export type Lockup = "bodoni" | "italiana" | "script" | "condensed" | "italic" | "the" | "marker" | "bungee" | "anton" | "shrikhand" | "tall" | "josefin";
 export type Badge = "TRENDING" | "NEW" | "FREE";
 
 export type Art = { scene: Scene; tone: Tone; src?: string; video?: string };
@@ -95,7 +95,7 @@ export const reels: Reel[] = [
     tags: ["Villa", "Golden hour", "Slow"],
   },
   {
-    slug: "lestate-rubata", kind: "film", title: "L'Estate Rubata", lockup: "script",
+    slug: "lestate-rubata", kind: "film", title: "L'Estate Rubata", lockup: "shrikhand",
     tagline: "The stolen summer. Nobody was supposed to find out.",
     description: "An heiress, a sailor and a yacht that isn't theirs. Portofino glitters below while two strangers pretend, for one weekend, that the Riviera belongs to them.",
     director: "Lust Photography", muses: ["serafina-bellini", "aurelio-conti"], category: "riviera-summer", collection: "grand-tour",
@@ -104,7 +104,7 @@ export const reels: Reel[] = [
     tags: ["Riviera", "Yacht", "Adventure"],
   },
   {
-    slug: "linen-at-noon", kind: "film", title: "Linen at Noon", lockup: "italiana",
+    slug: "linen-at-noon", kind: "film", title: "Linen at Noon", lockup: "josefin",
     tagline: "White sheets, hot light, no hurry at all.",
     description: "A single room in Capri, a ceiling fan turning lazily, and linen that slides like water. A study in light, skin tones and patience.",
     director: "Lust Photography", muses: ["beatrice-sole"], category: "linen-silk", collection: "slow-burn",
@@ -123,7 +123,7 @@ export const reels: Reel[] = [
     tags: ["Noir", "Train", "Strangers"],
   },
   {
-    slug: "red-wine-hours", kind: "film", title: "Red Wine Hours", lockup: "condensed",
+    slug: "red-wine-hours", kind: "film", title: "Red Wine Hours", lockup: "anton",
     tagline: "The cellar was cool. Nothing else was.",
     description: "A tasting in Montalcino runs late, then later still. Candles, oak barrels and a vintage that deserves to be savoured slowly.",
     director: "Lust Photography", muses: ["serafina-bellini", "luca-marchetti"], category: "vintage-romance",
@@ -132,7 +132,7 @@ export const reels: Reel[] = [
     tags: ["Wine", "Candlelight"],
   },
   {
-    slug: "cypress-lane", kind: "film", title: "Cypress Lane", lockup: "italic",
+    slug: "cypress-lane", kind: "film", title: "Cypress Lane", lockup: "marker",
     tagline: "Pull over. The sunset won't wait.",
     description: "A red convertible, a dusty road through the Val d'Orcia and a picnic blanket that was packed for exactly this reason.",
     director: "Lust Photography", muses: ["nives-castellani", "luca-marchetti"], category: "golden-hour", collection: "grand-tour",
@@ -141,7 +141,7 @@ export const reels: Reel[] = [
     tags: ["Road trip", "Outdoors", "Golden hour"],
   },
   {
-    slug: "la-contessa", kind: "film", title: "La Contessa", lockup: "bodoni",
+    slug: "la-contessa", kind: "film", title: "La Contessa", lockup: "tall",
     tagline: "She rang the bell once. That was enough.",
     description: "An old-money household, a contessa who is used to being obeyed and a new driver who is still learning the rules of the house.",
     director: "Lust Photography", muses: ["ottavia-neri", "dario-fiore"], category: "villa-nights", collection: "from-the-archive",
@@ -150,7 +150,7 @@ export const reels: Reel[] = [
     tags: ["Old money", "Power play", "Villa"],
   },
   {
-    slug: "dolce-far-niente", kind: "film", title: "Dolce Far Niente", lockup: "script",
+    slug: "dolce-far-niente", kind: "film", title: "Dolce Far Niente", lockup: "bungee",
     tagline: "The sweetness of doing nothing — together.",
     description: "A lazy Sunday in an olive grove, a hammock built for one and two people determined to prove otherwise.",
     director: "Lust Photography", muses: ["giada-orsini", "elio-ambrosi"], category: "golden-hour", collection: "slow-burn",

@@ -24,7 +24,7 @@ export default async function Watch({ params }: { params: Promise<{ slug: string
 
       <div className="gutter mt-14 grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
         <div>
-          <h1 className="font-display text-4xl font-light leading-tight md:text-6xl">{reel.tagline}</h1>
+          <h1 className="font-ui text-4xl font-semibold leading-[1.02] md:text-6xl">{reel.tagline}</h1>
           {reel.fantasy && (
             <p className="mt-5 flex flex-wrap items-center gap-2 text-sm text-parchment/70">
               Based on <span className="pill pill-ghost">{reel.fantasy.title}</span> a fantasy by <span className="text-ivory">@{reel.fantasy.by}</span>

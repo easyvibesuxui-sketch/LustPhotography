@@ -83,8 +83,8 @@ export default function NewsletterModal() {
             <div className="p-8 md:p-10">
               <button onClick={() => setOpen(false)} className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-lg hover:bg-forest" aria-label="Close">✕</button>
               <p className="label">Newsletter</p>
-              <h2 id="nl-title" className="mt-3 font-display text-4xl font-light leading-[1.05]">
-                Unlock free access to <em className="text-brass">exclusive shorts.</em>
+              <h2 id="nl-title" className="mt-3 font-ui text-4xl font-bold leading-[1.02]">
+                Unlock free access to <span className="text-brass">exclusive shorts.</span>
               </h2>
               {sent ? (
                 <p className="mt-8 text-parchment">Grazie mille — your key is on its way.</p>

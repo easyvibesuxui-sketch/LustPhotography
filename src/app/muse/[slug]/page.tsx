@@ -26,7 +26,7 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
         </div>
         <div className="gutter relative z-10 order-2 pb-16 lg:order-1 lg:pb-0">
           <p className="label mb-4">AI Muse · {m.from}</p>
-          <h1 className="font-display font-light leading-[0.88] tracking-[-0.02em]" style={{ fontSize: "clamp(3.2rem, 8vw, 8.5rem)" }}>
+          <h1 className="font-hero leading-[0.9] tracking-[-0.02em]" style={{ fontSize: "clamp(3.2rem, 8vw, 8.5rem)" }}>
             <SplitText text={m.name} delay={0.2} />
           </h1>
           <Reveal delay={0.5}>

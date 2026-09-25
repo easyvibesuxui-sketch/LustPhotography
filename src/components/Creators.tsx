@@ -30,7 +30,7 @@ export default function Creators() {
       <div className="gutter grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-end">
         <Reveal>
           <p className="label mb-4">For creators · Web studio</p>
-          <h2 className="font-display text-5xl font-light leading-[0.95] md:text-7xl">
+          <h2 className="font-hero text-5xl leading-[0.95] md:text-7xl">
             We build websites for <em className="text-brass">erotic content creators.</em>
           </h2>
         </Reveal>

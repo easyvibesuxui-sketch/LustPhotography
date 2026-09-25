@@ -41,7 +41,7 @@ export default function AgeGate() {
             <p className="font-bodoni text-5xl font-black tracking-tight text-brass">LP</p>
             <div className="hairline mx-auto my-6 w-40" />
             <p className="label">Lust Photography</p>
-            <h1 id="age-title" className="mt-4 font-display text-4xl font-light leading-tight md:text-5xl">
+            <h1 id="age-title" className="mt-4 font-hero text-4xl leading-tight md:text-5xl">
               You must be <em className="text-brass">18+</em> to enter
             </h1>
             <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-parchment/80">

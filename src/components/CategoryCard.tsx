@@ -2,14 +2,14 @@ import Link from "next/link";
 import type { Category } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 
+// Coloured washes per mood, like the tinted category tiles on the reference.
 const wash: Record<string, string> = {
-  wine: "from-[#5a1e1c]/80",
-  dusk: "from-[#2b3a4a]/80",
-  terracotta: "from-[#8a4a2e]/80",
-  sand: "from-[#8c7358]/80",
-  olive: "from-[#3e4a2a]/80",
-  noir: "from-[#15120f]/85",
-  forest: "from-[#1a2e22]/85",
+  "villa-nights": "#c77a86",
+  "riviera-summer": "#5f86ad",
+  "vintage-romance": "#c4734a",
+  "golden-hour": "#c9a24f",
+  "linen-silk": "#a58fc9",
+  "noir-italiano": "#4b4f58",
 };
 
 export default function CategoryCard({ c }: { c: Category }) {
@@ -18,9 +18,10 @@ export default function CategoryCard({ c }: { c: Category }) {
       <div className="art group-hover:scale-105">
         <ArtFrame {...c} seed={c.slug} alt={c.title} />
       </div>
-      <div className={`absolute inset-0 z-[3] bg-gradient-to-t ${wash[c.tone]} via-transparent to-transparent transition-opacity duration-700 group-hover:opacity-60`} />
+      <div className="absolute inset-0 z-[3] opacity-45 mix-blend-color transition-opacity duration-700 group-hover:opacity-20" style={{ background: wash[c.slug] }} />
+      <div className="absolute inset-0 z-[3] transition-opacity duration-700 group-hover:opacity-70" style={{ background: `linear-gradient(to top, ${wash[c.slug]}f2 0%, ${wash[c.slug]}66 38%, transparent 70%)` }} />
       <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center pb-6">
-        <p className="font-display text-3xl font-light tracking-tight md:text-4xl">{c.title}</p>
+        <p className="font-display text-4xl leading-none tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] md:text-5xl">{c.title}</p>
         <span className="mt-2 block h-px w-0 bg-brass transition-all duration-700 ease-[var(--ease-film)] group-hover:w-24" />
       </div>
     </Link>

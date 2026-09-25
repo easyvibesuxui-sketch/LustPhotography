@@ -12,7 +12,7 @@ export default function Fantasies() {
     <div className="gutter grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
       <Reveal>
         <p className="label mb-4">Fantasy submissions</p>
-        <h2 className="font-display text-5xl font-light leading-[0.95] md:text-7xl">
+        <h2 className="font-hero text-5xl leading-[0.95] md:text-7xl">
           Whisper us your fantasy.
           <br />
           <em className="text-brass">We&apos;ll bring it to life.</em>

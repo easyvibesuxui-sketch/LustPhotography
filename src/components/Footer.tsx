@@ -35,7 +35,7 @@ function Slogan() {
       aria-label={slogan}
       data-cursor=""
     >
-      <p className="whitespace-nowrap text-center font-display font-light leading-[0.9] tracking-[-0.03em] text-ivory" style={{ fontSize: "clamp(3rem, 12.4vw, 15rem)" }} aria-hidden>
+      <p className="whitespace-nowrap text-center font-hero leading-[0.95] tracking-[-0.03em] text-ivory" style={{ fontSize: "clamp(2.6rem, 11vw, 14rem)" }} aria-hidden>
         {letters.map((c, i) => {
           const pos = (i + 0.5) / letters.length;
           const lift = mx === null || reduce ? 0 : Math.max(0, 1 - Math.abs(pos - mx) * 6) * -0.08;
@@ -87,10 +87,10 @@ export default function Footer() {
             if (agree) setSent(true);
           }}
         >
-          <p className="font-display text-2xl leading-tight">
+          <p className="font-ui text-2xl font-bold leading-tight">
             Want free access?
             <br />
-            <em className="text-brass">Create an account.</em>
+            <span className="text-brass">Create an account.</span>
           </p>
           {sent ? (
             <p className="mt-6 text-sm text-parchment">Grazie. Check your inbox for the key.</p>

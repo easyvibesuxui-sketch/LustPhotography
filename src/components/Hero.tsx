@@ -37,7 +37,7 @@ export default function Hero() {
         <motion.p className="label mb-5 flex items-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 1 }}>
           <span className="h-px w-10 bg-brass" /> AI reels & images · Est. 2026 · Toscana
         </motion.p>
-        <h1 className="font-display font-light leading-[0.85] tracking-[-0.02em]" style={{ fontSize: "clamp(3.6rem, 11vw, 12rem)" }}>
+        <h1 className="font-hero leading-[0.88] tracking-[-0.02em]" style={{ fontSize: "clamp(3.6rem, 11vw, 12rem)" }}>
           <SplitText text="La Dolce" delay={0.9} />
           <br />
           <SplitText text="Lussuria" delay={1.15} className="italic text-brass" />

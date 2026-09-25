@@ -1,5 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Bodoni_Moda, Cormorant_Garamond, Italiana, Manrope, Pinyon_Script } from "next/font/google";
+import {
+  Anton,
+  Barlow_Condensed,
+  Bebas_Neue,
+  Big_Shoulders,
+  Bodoni_Moda,
+  Bungee,
+  DM_Serif_Display,
+  Instrument_Serif,
+  Italiana,
+  Josefin_Sans,
+  Permanent_Marker,
+  Pinyon_Script,
+  Roboto,
+  Shrikhand,
+} from "next/font/google";
 import "./globals.css";
 import AgeGate from "@/components/AgeGate";
 import Header from "@/components/Header";
@@ -9,11 +24,21 @@ import SmoothScroll from "@/components/SmoothScroll";
 import NewsletterModal from "@/components/NewsletterModal";
 import FloatingCta from "@/components/FloatingCta";
 
-const cormorant = Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400", "500", "600"], style: ["normal", "italic"], variable: "--font-cormorant" });
+// Editorial type, closer to the reference: serif display + condensed sans UI.
+const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-instrument" });
+const dmSerif = DM_Serif_Display({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-dmserif" });
+const barlow = Barlow_Condensed({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-barlow" });
+const roboto = Roboto({ subsets: ["latin"], weight: ["300", "400", "500", "700"], variable: "--font-roboto" });
+// Poster lockup faces — each film title gets its own voice and colour.
+const marker = Permanent_Marker({ subsets: ["latin"], weight: "400", variable: "--nf-marker" });
+const bungee = Bungee({ subsets: ["latin"], weight: "400", variable: "--nf-bungee" });
+const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--nf-anton" });
+const shrikhand = Shrikhand({ subsets: ["latin"], weight: "400", variable: "--nf-shrikhand" });
+const shoulders = Big_Shoulders({ subsets: ["latin"], weight: ["300", "500"], variable: "--nf-shoulders" });
+const josefin = Josefin_Sans({ subsets: ["latin"], weight: ["200", "400"], variable: "--nf-josefin" });
 const italiana = Italiana({ subsets: ["latin"], weight: "400", variable: "--font-italiana" });
-const bodoni = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "700", "900"], style: ["normal", "italic"], variable: "--font-bodoni" });
+const bodoni = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "700", "900"], style: ["normal", "italic"], variable: "--nf-bodoni" });
 const pinyon = Pinyon_Script({ subsets: ["latin"], weight: "400", variable: "--font-pinyon" });
-const manrope = Manrope({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-manrope" });
 const bebas = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-bebas" });
 
 export const metadata: Metadata = {
@@ -29,7 +54,7 @@ const bootScript = `try{var d=document.documentElement;if(localStorage.getItem('
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${italiana.variable} ${bodoni.variable} ${pinyon.variable} ${manrope.variable} ${bebas.variable}`} suppressHydrationWarning>
+    <html lang="en" className={[instrument, dmSerif, barlow, roboto, italiana, bodoni, pinyon, bebas, marker, bungee, anton, shrikhand, shoulders, josefin].map((f) => f.variable).join(" ")} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
