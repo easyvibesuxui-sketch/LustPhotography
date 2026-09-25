@@ -5,6 +5,7 @@ import { packages } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import Rail from "./Rail";
 import Reveal from "./Reveal";
+import { post } from "@/lib/auth";
 
 const steps = [
   ["01", "Consult", "A call about your brand, audience, platforms and what you earn from today."],
@@ -125,7 +126,11 @@ export default function Creators() {
               <p className="font-display text-3xl italic text-brass">Grazie — we&apos;ll reply within 48 hours.</p>
             </div>
           ) : (
-            <form className={`grid gap-4 rounded-md border border-brass/25 bg-bottle/60 p-6 md:grid-cols-2 md:p-8 ${paper}`} onSubmit={(e) => (e.preventDefault(), setSent(true))}>
+            <form className={`grid gap-4 rounded-md border border-brass/25 bg-bottle/60 p-6 md:grid-cols-2 md:p-8 ${paper}`} onSubmit={async (e) => {
+              e.preventDefault();
+              const res = await post("/api/lead", { kind: "creator", ...Object.fromEntries(new FormData(e.currentTarget)) });
+              if (!res.error) setSent(true);
+            }}>
               <p className="font-display text-3xl md:col-span-2">Tell us about your brand</p>
               {[
                 ["Name", "text", "name"],

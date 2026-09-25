@@ -28,3 +28,14 @@ CREATE TABLE IF NOT EXISTS login_failures (
   at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS login_failures_email ON login_failures(email, at);
+CREATE TABLE IF NOT EXISTS leads (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,
+  name TEXT,
+  email TEXT NOT NULL,
+  company TEXT,
+  link TEXT,
+  budget TEXT,
+  message TEXT,
+  created_at INTEGER NOT NULL
+);

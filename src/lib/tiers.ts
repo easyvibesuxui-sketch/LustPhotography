@@ -1,39 +1,76 @@
-// Access tiers, shared by the site (lock badges) and the Worker (media gate).
-// Keep this file dependency-free: the Worker bundles it directly.
+// Content levels and access tiers, shared by the site (locks, teasers) and the
+// Worker (media gate). Keep this file dependency-free: the Worker bundles it.
+//
+// Levels describe the content itself:
+//   dolce   — fully clothed / SFW, safe for Instagram and the public site
+//   boudoir — implied nudity (covered, lingerie, silhouettes)
+//   prive   — explicit nudity
+// Tiers describe the viewer. Internal ids stay stable (they live in D1);
+// only the labels changed when plans were renamed.
 
+export type Level = "dolce" | "boudoir" | "prive";
 export type Tier = "public" | "free" | "amante" | "maison";
 
 export const TIER_RANK: Record<Tier, number> = { public: 0, free: 1, amante: 2, maison: 3 };
 
 export const TIER_LABEL: Record<Tier, string> = {
   public: "Everyone",
-  free: "Free members",
-  amante: "Amante",
-  maison: "Maison",
+  free: "Dolce Vita",
+  amante: "Boudoir",
+  maison: "Privé",
 };
 
-// Per video id (media/vid/<id>.mp4). Posters and images are public teasers.
-export const VIDEO_TIER: Record<string, Tier> = {
-  f02: "public", // hero + Linen at Noon
-  f15: "free",
-  s14: "free",
-  s09: "amante",
-  s12: "amante",
-  s13: "amante",
-  s16: "amante",
-  f01: "maison",
-  f04: "maison",
-  f05: "maison",
-  f06: "maison",
-  f10: "maison",
-  f11: "maison",
+export const LEVEL_LABEL: Record<Level, string> = { dolce: "Dolce Vita", boudoir: "Boudoir", prive: "Privé" };
+
+// Which tier may see each level.
+export const LEVEL_TIER: Record<Level, Tier> = { dolce: "public", boudoir: "amante", prive: "maison" };
+
+// Per media id. Anything not listed is treated as Privé.
+export const VIDEO_LEVEL: Record<string, Level> = {
+  f02t: "dolce", // SFW teaser cut of f02 (hero)
+  f11t: "dolce", // SFW teaser cut of f11
+  f01: "boudoir",
+  f11: "boudoir",
+  f15: "boudoir",
+  f02: "prive",
+  f04: "prive",
+  f05: "prive",
+  f06: "prive",
+  f10: "prive",
+  s09: "prive",
+  s12: "prive",
+  s13: "prive",
+  s14: "prive",
+  s16: "prive",
 };
+
+// Poster frames can be tamer than the video they belong to.
+export const POSTER_LEVEL: Record<string, Level> = {
+  f02: "dolce",
+  f11: "dolce",
+  f15: "dolce",
+  f01: "boudoir",
+  f06: "boudoir",
+  s12: "boudoir",
+  s14: "boudoir",
+};
+
+// iNN = full stills (all explicit); cNN = shoulders-up crops (SFW).
+export const imageLevel = (id: string): Level => (id.startsWith("c") ? "dolce" : "prive");
 
 export const canAccess = (have: Tier | undefined, need: Tier | undefined) =>
   TIER_RANK[have ?? "public"] >= TIER_RANK[need ?? "public"];
 
-// Required tier for a media path like "vid/f05.mp4"; anything unlisted is public.
+export const tierForLevel = (l: Level) => LEVEL_TIER[l];
+
+// Required tier for a media path like "vid/f05.mp4". Blurred teasers are public.
 export function tierForMedia(path: string): Tier {
-  const m = /^vid\/([a-z0-9]+)\.mp4$/.exec(path);
-  return m ? VIDEO_TIER[m[1]] ?? "maison" : "public";
+  if (/\.blur\.webp$/.test(path)) return "public";
+  let m = /^vid\/([a-z0-9]+)\.mp4$/.exec(path);
+  if (m) return LEVEL_TIER[VIDEO_LEVEL[m[1]] ?? "prive"];
+  m = /^vid\/([a-z0-9]+)\.jpg$/.exec(path);
+  if (m) return LEVEL_TIER[POSTER_LEVEL[m[1]] ?? "prive"];
+  m = /^img\/([a-z0-9]+)\.webp$/.exec(path);
+  if (m) return LEVEL_TIER[imageLevel(m[1])];
+  return "maison";
 }

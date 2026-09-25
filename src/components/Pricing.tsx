@@ -8,19 +8,19 @@ import Reveal from "./Reveal";
 
 const plans: { tier: Tier; name: string; price: string; note: string; blurb: string; features: string[]; featured?: boolean }[] = [
   {
-    tier: "free", name: "Libera", price: "€0", note: "forever",
-    blurb: "A first taste of the villa.",
-    features: ["Selected free reels & shorts", "All image previews", "Weekly newsletter", "Submit your fantasies"],
+    tier: "free", name: "Dolce Vita", price: "€0", note: "forever",
+    blurb: "The villa, the sea, the golden hour.",
+    features: ["All Dolce Vita portraits & teasers", "Blurred previews of everything else", "Weekly newsletter", "Submit your fantasies"],
   },
   {
-    tier: "amante", name: "Amante", price: "€9", note: "per month", featured: true,
-    blurb: "Every short, every week.",
-    features: ["Everything in Libera", "All Lust Shorts", "New shorts every week", "Full-resolution image downloads"],
+    tier: "amante", name: "Boudoir", price: "€9", note: "per month", featured: true,
+    blurb: "Silk, shadow and suggestion.",
+    features: ["Everything in Dolce Vita", "All Boudoir reels", "Lingerie & implied-nude stills", "New drops every week"],
   },
   {
-    tier: "maison", name: "Maison", price: "€19", note: "per month",
-    blurb: "The complete collection.",
-    features: ["Everything in Amante", "All films", "Early access to new releases", "Priority on fantasy requests"],
+    tier: "maison", name: "Privé", price: "€19", note: "per month",
+    blurb: "Nothing held back.",
+    features: ["Everything in Boudoir", "The full uncensored archive", "All films & shorts", "Priority on fantasy requests"],
   },
 ];
 

@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#0E1A13" };
 
 // Runs before paint so returning visitors never see the age gate flash.
-const bootScript = `try{var d=document.documentElement;if(localStorage.getItem('lp-age')==='ok')d.dataset.age='ok';if(localStorage.getItem('lp-veil')==='on')d.dataset.veil='on';}catch(e){}`;
+const bootScript = `try{var d=document.documentElement;if(localStorage.getItem('lp-age')==='ok')d.dataset.age='ok';d.dataset.veil=localStorage.getItem('lp-veil')==='off'?'off':'on';}catch(e){}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -6,7 +6,7 @@ import ArtFrame from "./ArtFrame";
 import { stills } from "@/lib/data";
 import { post } from "@/lib/auth";
 
-const cover = stills.find((s) => s.slug === "laughing-tide");
+const cover = stills.find((s) => s.slug === "laughing-amalfi");
 import { lockScroll } from "./SmoothScroll";
 import { CloseIcon } from "./Icons";
 

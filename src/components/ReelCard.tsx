@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { canAccess, type Reel } from "@/lib/data";
+import { visibleArt, type Reel } from "@/lib/data";
 import { useMe } from "@/lib/auth";
 import { LockPill } from "./Lock";
 import ArtFrame from "./ArtFrame";
@@ -32,9 +32,9 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
   const video = useRef<HTMLDivElement>(null);
   const { revealed, consume } = useVeilReveal();
   const { me } = useMe();
-  const locked = !canAccess(me?.tier, reel.tier);
-  // Locked reels preview their poster only; the video itself is gated server-side.
-  const art = locked ? { ...reel, video: undefined, src: reel.poster } : reel;
+  // Locked reels show their poster (or its blur); the video itself is gated server-side.
+  const art = visibleArt(reel, me?.tier);
+  const locked = art.locked;
 
   const start = () => {
     window.clearTimeout(timer.current);

@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { stills, TAGS, type Tag } from "@/lib/data";
 import StillsGrid from "./StillsGrid";
-import TagFilter, { readTag, writeTag } from "./TagFilter";
+import TagFilter, { readTag, tagsFor, writeTag } from "./TagFilter";
+import { useMe } from "@/lib/auth";
 
 export default function ImagesGallery() {
   const [tag, setTag] = useState<Tag | null>(null);
+  const { me } = useMe();
+  const tags = tagsFor(me?.tier);
   useEffect(() => setTag(readTag()), []);
 
   const list = useMemo(() => (tag ? stills.filter((s) => s.tags.includes(tag)) : stills), [tag]);
@@ -27,7 +30,7 @@ export default function ImagesGallery() {
           {tag && <> tagged <span className="text-brass">#{tag}</span></>}
         </p>
       </div>
-      <TagFilter active={tag} onChange={pick} counts={counts} className="mb-8 md:px-[var(--gutter)]" />
+      <TagFilter tags={tags} active={tag} onChange={pick} counts={counts} className="mb-8 md:px-[var(--gutter)]" />
       <StillsGrid key={tag ?? "all"} stills={list} />
     </>
   );

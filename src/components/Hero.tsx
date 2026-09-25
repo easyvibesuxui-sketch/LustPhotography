@@ -57,7 +57,7 @@ export default function Hero() {
           <Link href="/watch/villa-segreta" className="group ml-1 hidden items-center gap-3 text-sm text-parchment md:flex">
             <span className="pill pill-TRENDING">Now showing</span>
             <span className="font-display text-xl italic text-ivory group-hover:text-brass">Villa Segreta</span>
-            <span className="text-xs text-parchment/70">12 min</span>
+            <span className="text-xs text-parchment/70">0:10</span>
           </Link>
         </motion.div>
       </motion.div>

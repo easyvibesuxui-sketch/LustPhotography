@@ -11,6 +11,7 @@ import CollectionTile from "@/components/CollectionTile";
 import MuseCard from "@/components/MuseCard";
 import Fantasies from "@/components/Fantasies";
 import Creators from "@/components/Creators";
+import Brands from "@/components/Brands";
 import Reveal from "@/components/Reveal";
 
 export default function Home() {
@@ -46,7 +47,7 @@ export default function Home() {
 
       <section id="images" className="scroll-mt-20 pt-16 md:pt-24">
         <SectionHead eyebrow="Stills from the studio" title="Trending Images" href="/images/" />
-        <StillsGrid stills={stills} />
+        <StillsGrid stills={stills.slice(0, 16)} />
       </section>
 
       <section id="collections" className="scroll-mt-20 pt-16 md:pt-24">
@@ -83,6 +84,10 @@ export default function Home() {
 
       <section id="fantasies" className="scroll-mt-20 pt-24 md:pt-36">
         <Fantasies />
+      </section>
+
+      <section id="brands" className="relative mt-24 scroll-mt-20 border-t border-brass/15 pb-8 pt-20 md:mt-36 md:pt-28">
+        <Brands />
       </section>
 
       <section id="creators" className="relative mt-24 scroll-mt-20 border-t border-brass/15 bg-[#0b1510] pb-24 pt-20 md:mt-36 md:pt-28">

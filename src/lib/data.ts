@@ -7,12 +7,27 @@ export type Scene = "cypress" | "villa" | "riviera" | "linen" | "curve" | "blind
 export type Lockup = "bodoni" | "italiana" | "script" | "condensed" | "italic" | "the" | "marker" | "bungee" | "anton" | "shrikhand" | "tall" | "josefin";
 export type Badge = "TRENDING" | "NEW" | "FREE";
 
-import { VIDEO_TIER, type Tier } from "./tiers";
+import { canAccess, imageLevel, LEVEL_TIER, POSTER_LEVEL, VIDEO_LEVEL, type Level, type Tier } from "./tiers";
 
-export const TAGS = ["Nipslip", "Naturist", "Outdoor", "Big boobs", "Small boobs"] as const;
+// Public tags. "Nipslip" is Privé-only: hidden from filters for everyone else.
+export const TAGS = ["Au Naturel", "Al Fresco", "Curves", "Petite", "Nipslip"] as const;
 export type Tag = (typeof TAGS)[number];
+export const PRIVE_TAGS: Tag[] = ["Nipslip"];
 
-export type Art = { scene: Scene; tone: Tone; src?: string; video?: string; poster?: string; tier?: Tier };
+// `tier` gates the full media; `blur` is a public, heavily blurred teaser.
+// Videos also carry a poster frame with its own (often tamer) tier.
+export type Art = {
+  scene: Scene;
+  tone: Tone;
+  src?: string;
+  video?: string;
+  poster?: string;
+  level?: Level;
+  tier?: Tier;
+  blur?: string;
+  posterTier?: Tier;
+  posterBlur?: string;
+};
 
 export type Chapter = { t: string; label: string };
 
@@ -61,38 +76,65 @@ export type Collection = Art & { slug: string; title: string; subtitle?: string 
 // Set NEXT_PUBLIC_MEDIA_BASE to its URL; locally it falls back to /public/media.
 // With no base in a production build, items keep their SVG placeholder art.
 const MEDIA = process.env.NEXT_PUBLIC_MEDIA_BASE ?? (process.env.NODE_ENV === "development" ? "/media" : "");
-const img = (n: number) => (MEDIA ? `${MEDIA}/img/i${String(n).padStart(2, "0")}.webp` : undefined);
-const vid = (id: string) => ({ tier: VIDEO_TIER[id], ...(MEDIA ? { video: `${MEDIA}/vid/${id}.mp4`, poster: `${MEDIA}/vid/${id}.jpg` } : {}) });
+const pad = (n: number) => String(n).padStart(2, "0");
+// Full still (Privé) with its blurred teaser.
+const img = (n: number): Partial<Art> => {
+  const level = imageLevel(`i${pad(n)}`);
+  return { level, tier: LEVEL_TIER[level], ...(MEDIA ? { src: `${MEDIA}/img/i${pad(n)}.webp`, blur: `${MEDIA}/img/i${pad(n)}.blur.webp` } : {}) };
+};
+// Shoulders-up SFW crop of still n — safe for every public surface.
+const crop = (n: number): Partial<Art> => ({ level: "dolce", tier: "public", ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
+// Video + poster, each with its own level. `posterOf` borrows another poster (for teaser cuts).
+const vid = (id: string, posterOf = id): Partial<Art> => {
+  const level = VIDEO_LEVEL[id] ?? "prive";
+  const pl = POSTER_LEVEL[posterOf] ?? "prive";
+  return {
+    level,
+    tier: LEVEL_TIER[level],
+    posterTier: LEVEL_TIER[pl],
+    ...(MEDIA ? { video: `${MEDIA}/vid/${id}.mp4`, poster: `${MEDIA}/vid/${posterOf}.jpg`, posterBlur: `${MEDIA}/vid/${posterOf}.blur.webp` } : {}),
+  };
+};
+
+// What a viewer with tier `have` may actually load. Locked media never ships
+// its real URL: videos fall back to the poster (if allowed) or its blur,
+// images fall back to their blur, and anything else to the SVG art.
+export function visibleArt<T extends Art>(a: T, have: Tier | undefined): T & { locked: boolean } {
+  if (canAccess(have, a.tier)) return { ...a, locked: false };
+  const posterOk = a.poster && canAccess(have, a.posterTier);
+  const teaser = a.video ? (posterOk ? a.poster : a.posterBlur) : a.blur;
+  return { ...a, video: undefined, src: teaser, locked: true };
+}
 
 export const categories: Category[] = [
-  { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", src: img(4) },
-  { slug: "riviera-summer", title: "Riviera Summer", scene: "riviera", tone: "dusk", src: img(14) },
-  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", src: img(2) },
-  { slug: "golden-hour", title: "Golden Hour", scene: "cypress", tone: "sand", src: img(13) },
-  { slug: "linen-silk", title: "Linen & Silk", scene: "linen", tone: "sand", src: img(1) },
-  { slug: "noir-italiano", title: "Noir Italiano", scene: "blinds", tone: "noir", src: img(5) },
+  { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", ...crop(24) },
+  { slug: "riviera-summer", title: "Riviera Summer", scene: "riviera", tone: "dusk", ...crop(20) },
+  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", ...crop(6) },
+  { slug: "golden-hour", title: "Golden Hour", scene: "cypress", tone: "sand", ...crop(8) },
+  { slug: "linen-silk", title: "Linen & Silk", scene: "linen", tone: "sand", ...crop(23) },
+  { slug: "noir-italiano", title: "Noir Italiano", scene: "blinds", tone: "noir", ...crop(25) },
 ];
 
 export const collections: Collection[] = [
-  { slug: "slow-burn", title: "Slow Burn", subtitle: "For those who savour every second.", scene: "curve", tone: "terracotta", src: img(22) },
-  { slug: "inspired-by-cinema", title: "Inspired by Cinema", subtitle: "Cinecittà dreams, 1963.", scene: "blinds", tone: "noir", src: img(12) },
-  { slug: "grand-tour", title: "The Grand Tour", subtitle: "Florence to Amalfi, one stolen summer.", scene: "road", tone: "olive", src: img(11) },
-  { slug: "from-the-archive", title: "From the Archive", scene: "villa", tone: "sand", src: img(6) },
+  { slug: "slow-burn", title: "Slow Burn", subtitle: "For those who savour every second.", scene: "curve", tone: "terracotta", ...crop(22) },
+  { slug: "inspired-by-cinema", title: "Inspired by Cinema", subtitle: "Cinecittà dreams, 1963.", scene: "blinds", tone: "noir", ...crop(3) },
+  { slug: "grand-tour", title: "The Grand Tour", subtitle: "Florence to Amalfi, one stolen summer.", scene: "road", tone: "olive", ...crop(9) },
+  { slug: "from-the-archive", title: "From the Archive", scene: "villa", tone: "sand", ...crop(7) },
 ];
 
 export const muses: Muse[] = [
-  { slug: "livia-rinaldi", name: "Livia Rinaldi", from: "Firenze", scene: "curve", tone: "terracotta", src: img(3), bio: "A restorer of old frescoes by day, Livia wears her own art on her skin and moves through sunlit piazzas as if the afternoon belongs only to her.", tags: ["Golden hour", "Ink", "Slow"] },
-  { slug: "aurora-conti", name: "Aurora Conti", from: "Portofino", scene: "riviera", tone: "dusk", src: img(10), bio: "Sailor, charmer, keeper of a vintage convertible that has never once been on time.", tags: ["Riviera", "Adventure"] },
-  { slug: "serafina-bellini", name: "Serafina Bellini", from: "Siena", scene: "wine", tone: "wine", src: img(6), bio: "Heiress to a vineyard and to a scandal nobody in Siena will say out loud. Laughs louder than anyone at the table.", tags: ["Old money", "Wine"] },
-  { slug: "mara-vale", name: "Mara Vale", from: "Roma", scene: "blinds", tone: "noir", src: img(25), bio: "A photographer who prefers shadows to light, and night trains to anything else.", tags: ["Noir", "Cinema"] },
-  { slug: "giada-orsini", name: "Giada Orsini", from: "Amalfi", scene: "riviera", tone: "sand", src: img(19), bio: "Swims at dawn, sleeps at noon, disappears at dusk.", tags: ["Summer", "Sea"] },
-  { slug: "ottavia-neri", name: "Ottavia Neri", from: "Milano", scene: "villa", tone: "forest", src: img(24), bio: "A contessa of the old school: gloves, pearls and a very private library.", tags: ["Contessa", "Villa"] },
-  { slug: "lucia-marchetti", name: "Lucia Marchetti", from: "Lucca", scene: "cypress", tone: "olive", src: img(7), bio: "Tends olive groves, writes letters she never sends.", tags: ["Countryside", "Romance"] },
-  { slug: "beatrice-sole", name: "Beatrice Sole", from: "Capri", scene: "linen", tone: "sand", src: img(20), bio: "Her name means sun. She takes it seriously.", tags: ["Linen", "Sun"] },
-  { slug: "daria-fiore", name: "Daria Fiore", from: "Venezia", scene: "blinds", tone: "wine", src: img(23), bio: "A gondola, a mask, a secret — pick any two.", tags: ["Masquerade", "Night"] },
-  { slug: "nives-castellani", name: "Nives Castellani", from: "Val d'Orcia", scene: "road", tone: "terracotta", src: img(21), bio: "Drives too fast down cypress roads, laughing the whole way.", tags: ["Road trip", "Adventure"] },
-  { slug: "elena-ambrosi", name: "Elena Ambrosi", from: "Napoli", scene: "curve", tone: "olive", src: img(8), bio: "Nine months of summer, and not a single regret. Mother-to-be, muse forever.", tags: ["Maternity", "Slow"] },
-  { slug: "carlotta-reni", name: "Carlotta Reni", from: "Bologna", scene: "villa", tone: "terracotta", src: img(9), bio: "Collects keys to rooms she was never invited into.", tags: ["Mystery", "Park"] },
+  { slug: "livia-rinaldi", name: "Livia Rinaldi", from: "Firenze", scene: "curve", tone: "terracotta", ...crop(3), bio: "A restorer of old frescoes by day, Livia wears her own art on her skin and moves through sunlit piazzas as if the afternoon belongs only to her.", tags: ["Golden hour", "Ink", "Slow"] },
+  { slug: "aurora-conti", name: "Aurora Conti", from: "Portofino", scene: "riviera", tone: "dusk", ...crop(10), bio: "Sailor, charmer, keeper of a vintage convertible that has never once been on time.", tags: ["Riviera", "Adventure"] },
+  { slug: "serafina-bellini", name: "Serafina Bellini", from: "Siena", scene: "wine", tone: "wine", ...crop(6), bio: "Heiress to a vineyard and to a scandal nobody in Siena will say out loud. Laughs louder than anyone at the table.", tags: ["Old money", "Wine"] },
+  { slug: "mara-vale", name: "Mara Vale", from: "Roma", scene: "blinds", tone: "noir", ...crop(25), bio: "A photographer who prefers shadows to light, and night trains to anything else.", tags: ["Noir", "Cinema"] },
+  { slug: "giada-orsini", name: "Giada Orsini", from: "Amalfi", scene: "riviera", tone: "sand", ...crop(19), bio: "Swims at dawn, sleeps at noon, disappears at dusk.", tags: ["Summer", "Sea"] },
+  { slug: "ottavia-neri", name: "Ottavia Neri", from: "Milano", scene: "villa", tone: "forest", ...crop(24), bio: "A contessa of the old school: gloves, pearls and a very private library.", tags: ["Contessa", "Villa"] },
+  { slug: "lucia-marchetti", name: "Lucia Marchetti", from: "Lucca", scene: "cypress", tone: "olive", ...crop(7), bio: "Tends olive groves, writes letters she never sends.", tags: ["Countryside", "Romance"] },
+  { slug: "beatrice-sole", name: "Beatrice Sole", from: "Capri", scene: "linen", tone: "sand", ...crop(20), bio: "Her name means sun. She takes it seriously.", tags: ["Linen", "Sun"] },
+  { slug: "daria-fiore", name: "Daria Fiore", from: "Venezia", scene: "blinds", tone: "wine", ...crop(23), bio: "A gondola, a mask, a secret — pick any two.", tags: ["Masquerade", "Night"] },
+  { slug: "nives-castellani", name: "Nives Castellani", from: "Val d'Orcia", scene: "road", tone: "terracotta", ...crop(21), bio: "Drives too fast down cypress roads, laughing the whole way.", tags: ["Road trip", "Adventure"] },
+  { slug: "elena-ambrosi", name: "Elena Ambrosi", from: "Napoli", scene: "curve", tone: "olive", ...crop(8), bio: "Nine months of summer, and not a single regret. Mother-to-be, muse forever.", tags: ["Maternity", "Slow"] },
+  { slug: "carlotta-reni", name: "Carlotta Reni", from: "Bologna", scene: "villa", tone: "terracotta", ...crop(9), bio: "Collects keys to rooms she was never invited into.", tags: ["Mystery", "Park"] },
 ];
 
 const ch = (...pairs: [string, string][]): Chapter[] => pairs.map(([t, label]) => ({ t, label }));
@@ -122,7 +164,7 @@ export const reels: Reel[] = [
     tagline: "White linen, hot light, no hurry at all.",
     description: "A single room in Capri, a ceiling fan turning lazily, and a robe that slides like water. A study in light, skin and patience.",
     director: "Lust Photography", muses: ["beatrice-sole"], category: "linen-silk", collection: "slow-burn",
-    duration: "0:10", seconds: 10, rating: 4.9, badges: ["TRENDING", "FREE"], scene: "linen", tone: "sand",
+    duration: "0:10", seconds: 10, rating: 4.9, badges: ["TRENDING"], scene: "linen", tone: "sand",
     chapters: ch(["0:00", "Noon"], ["0:04", "Linen"], ["0:08", "Stillness"]),
     tags: ["Linen", "Solo", "Slow"],
   },
@@ -168,18 +210,18 @@ export const reels: Reel[] = [
     tagline: "The sweetness of doing nothing — on warm sand.",
     description: "A lazy Sunday on the shore, the sea breathing slowly and a smile that says she has nowhere else to be.",
     director: "Lust Photography", muses: ["giada-orsini"], category: "riviera-summer", collection: "slow-burn",
-    duration: "0:15", seconds: 15, rating: 4.6, badges: ["FREE"], scene: "riviera", tone: "olive",
+    duration: "0:15", seconds: 15, rating: 4.6, badges: ["NEW"], scene: "riviera", tone: "olive",
     chapters: ch(["0:00", "Domenica"], ["0:05", "Sand"], ["0:10", "Sea"]),
     tags: ["Beach", "Sun", "Slow"],
   },
 
   // Shorts — 9:16 reels
   ...([
-    ["morning-ritual", "Morning Ritual", "s09", "linen", "sand", "elena-ambrosi", "linen-silk", "0:10", ["NEW"], ["Big boobs"]],
-    ["shutters", "Shutters", "s12", "villa", "terracotta", "livia-rinaldi", "villa-nights", "0:10", ["TRENDING"], ["Nipslip", "Small boobs"]],
-    ["salt-and-sun", "Salt & Sun", "s13", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:05", ["TRENDING"], ["Naturist", "Outdoor"]],
-    ["sand-angel", "Sand Angel", "s14", "riviera", "sand", "beatrice-sole", "riviera-summer", "0:10", ["FREE"], ["Naturist", "Outdoor"]],
-    ["riviera-gold", "Riviera Gold", "s16", "riviera", "terracotta", "aurora-conti", "golden-hour", "0:15", ["NEW"], ["Outdoor", "Nipslip"]],
+    ["morning-ritual", "Morning Ritual", "s09", "linen", "sand", "elena-ambrosi", "linen-silk", "0:10", ["NEW"], ["Curves"]],
+    ["shutters", "Shutters", "s12", "villa", "terracotta", "livia-rinaldi", "villa-nights", "0:10", ["TRENDING"], ["Nipslip", "Petite"]],
+    ["salt-and-sun", "Salt & Sun", "s13", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:05", ["TRENDING"], ["Au Naturel", "Al Fresco"]],
+    ["sand-angel", "Sand Angel", "s14", "riviera", "sand", "beatrice-sole", "riviera-summer", "0:10", ["NEW"], ["Au Naturel", "Al Fresco"]],
+    ["riviera-gold", "Riviera Gold", "s16", "riviera", "terracotta", "aurora-conti", "golden-hour", "0:15", ["NEW"], ["Al Fresco", "Nipslip"]],
   ] as const).map(([slug, title, v, scene, tone, muse, category, duration, badges, tags]): Reel => ({
     slug, kind: "short", title, lockup: "italic", ...vid(v), scene, tone, muses: [muse], category, duration,
     seconds: Number(duration.split(":")[1]), rating: 4.5 + (title.length % 5) / 10, badges: [...badges],
@@ -194,39 +236,62 @@ export const shorts = reels.filter((r) => r.kind === "short");
 
 // [title, image #, ratio, badges, muse, category, tags]
 const stillSeeds: [string, number, Still["ratio"], Badge[], string, string, Tag[]][] = [
-  ["Window Light, Fiesole", 1, "landscape", ["TRENDING"], "beatrice-sole", "linen-silk", ["Big boobs", "Nipslip"]],
-  ["The Mirror Room", 2, "landscape", ["NEW"], "serafina-bellini", "vintage-romance", ["Small boobs", "Nipslip"]],
-  ["Ink & Sunlight", 3, "portrait", ["TRENDING"], "livia-rinaldi", "golden-hour", ["Outdoor", "Big boobs"]],
-  ["Salotto d'Oro", 4, "landscape", [], "ottavia-neri", "villa-nights", ["Small boobs"]],
-  ["Silver Chain", 5, "landscape", ["TRENDING"], "mara-vale", "noir-italiano", ["Outdoor"]],
-  ["Girasole", 6, "portrait", ["FREE"], "serafina-bellini", "golden-hour", ["Outdoor", "Big boobs"]],
-  ["Parco, Sunday", 7, "portrait", ["NEW"], "lucia-marchetti", "golden-hour", ["Outdoor", "Big boobs"]],
-  ["Nine Months of Summer", 8, "portrait", [], "elena-ambrosi", "golden-hour", ["Outdoor", "Big boobs"]],
-  ["Park Bench Smile", 9, "portrait", ["TRENDING"], "carlotta-reni", "golden-hour", ["Outdoor"]],
-  ["Blue Hour, Amalfi", 10, "portrait", ["NEW"], "aurora-conti", "riviera-summer", ["Outdoor", "Nipslip"]],
-  ["Black Sand", 11, "landscape", [], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
-  ["Windswept", 12, "landscape", ["FREE"], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor", "Small boobs"]],
-  ["Sun Worship", 13, "landscape", ["TRENDING"], "beatrice-sole", "riviera-summer", ["Naturist", "Outdoor"]],
-  ["Golden Bikini", 14, "landscape", ["NEW"], "aurora-conti", "riviera-summer", ["Outdoor", "Nipslip", "Big boobs"]],
-  ["Salt on Skin", 15, "landscape", [], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor"]],
-  ["Shoreline Smile", 16, "landscape", ["TRENDING"], "nives-castellani", "riviera-summer", ["Naturist", "Outdoor"]],
-  ["Mediterranean Noon", 17, "landscape", [], "daria-fiore", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
-  ["Sunlit", 18, "landscape", ["FREE"], "beatrice-sole", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
-  ["Laughing Tide", 19, "portrait", ["TRENDING"], "giada-orsini", "riviera-summer", ["Outdoor", "Nipslip"]],
-  ["Gold Strings", 20, "portrait", ["NEW"], "beatrice-sole", "riviera-summer", ["Outdoor", "Nipslip"]],
-  ["Sea Spray", 21, "portrait", [], "nives-castellani", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
-  ["Low Sun", 22, "portrait", ["TRENDING"], "ottavia-neri", "riviera-summer", ["Naturist", "Outdoor"]],
-  ["Spa, Eyes Closed", 23, "portrait", ["NEW"], "daria-fiore", "linen-silk", ["Small boobs"]],
-  ["Warm Room", 24, "portrait", [], "ottavia-neri", "linen-silk", ["Big boobs"]],
+  ["Window Light, Fiesole", 1, "landscape", ["TRENDING"], "beatrice-sole", "linen-silk", ["Curves", "Nipslip"]],
+  ["The Mirror Room", 2, "landscape", ["NEW"], "serafina-bellini", "vintage-romance", ["Petite", "Nipslip"]],
+  ["Ink & Sunlight", 3, "portrait", ["TRENDING"], "livia-rinaldi", "golden-hour", ["Al Fresco", "Curves"]],
+  ["Salotto d'Oro", 4, "landscape", [], "ottavia-neri", "villa-nights", ["Petite"]],
+  ["Silver Chain", 5, "landscape", ["TRENDING"], "mara-vale", "noir-italiano", ["Al Fresco"]],
+  ["Girasole", 6, "portrait", ["FREE"], "serafina-bellini", "golden-hour", ["Al Fresco", "Curves"]],
+  ["Parco, Sunday", 7, "portrait", ["NEW"], "lucia-marchetti", "golden-hour", ["Al Fresco", "Curves"]],
+  ["Nine Months of Summer", 8, "portrait", [], "elena-ambrosi", "golden-hour", ["Al Fresco", "Curves"]],
+  ["Park Bench Smile", 9, "portrait", ["TRENDING"], "carlotta-reni", "golden-hour", ["Al Fresco"]],
+  ["Blue Hour, Amalfi", 10, "portrait", ["NEW"], "aurora-conti", "riviera-summer", ["Al Fresco", "Nipslip"]],
+  ["Black Sand", 11, "landscape", [], "giada-orsini", "riviera-summer", ["Au Naturel", "Al Fresco", "Curves"]],
+  ["Windswept", 12, "landscape", ["FREE"], "giada-orsini", "riviera-summer", ["Au Naturel", "Al Fresco", "Petite"]],
+  ["Sun Worship", 13, "landscape", ["TRENDING"], "beatrice-sole", "riviera-summer", ["Au Naturel", "Al Fresco"]],
+  ["Golden Bikini", 14, "landscape", ["NEW"], "aurora-conti", "riviera-summer", ["Al Fresco", "Nipslip", "Curves"]],
+  ["Salt on Skin", 15, "landscape", [], "giada-orsini", "riviera-summer", ["Au Naturel", "Al Fresco"]],
+  ["Shoreline Smile", 16, "landscape", ["TRENDING"], "nives-castellani", "riviera-summer", ["Au Naturel", "Al Fresco"]],
+  ["Mediterranean Noon", 17, "landscape", [], "daria-fiore", "riviera-summer", ["Au Naturel", "Al Fresco", "Curves"]],
+  ["Sunlit", 18, "landscape", ["FREE"], "beatrice-sole", "riviera-summer", ["Au Naturel", "Al Fresco", "Curves"]],
+  ["Laughing Tide", 19, "portrait", ["TRENDING"], "giada-orsini", "riviera-summer", ["Al Fresco", "Nipslip"]],
+  ["Gold Strings", 20, "portrait", ["NEW"], "beatrice-sole", "riviera-summer", ["Al Fresco", "Nipslip"]],
+  ["Sea Spray", 21, "portrait", [], "nives-castellani", "riviera-summer", ["Au Naturel", "Al Fresco", "Curves"]],
+  ["Low Sun", 22, "portrait", ["TRENDING"], "ottavia-neri", "riviera-summer", ["Au Naturel", "Al Fresco"]],
+  ["Spa, Eyes Closed", 23, "portrait", ["NEW"], "daria-fiore", "linen-silk", ["Petite"]],
+  ["Warm Room", 24, "portrait", [], "ottavia-neri", "linen-silk", ["Curves"]],
   ["Candlelit", 25, "portrait", ["FREE"], "mara-vale", "linen-silk", ["Nipslip"]],
 ];
 
 const toneFor: Record<string, Tone> = { "riviera-summer": "dusk", "golden-hour": "sand", "linen-silk": "sand", "villa-nights": "wine", "vintage-romance": "terracotta", "noir-italiano": "noir" };
 
-export const stills: Still[] = stillSeeds.map(([title, n, ratio, badges, muse, category, tags]) => ({
-  slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-  title, src: img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges, muse, category, tags,
-}));
+const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+// Dolce Vita portraits: SFW crops, open to everyone and first in every grid.
+const dolceSeeds: [string, number, string, string, Tag[]][] = [
+  ["Piazza, Late Light", 3, "livia-rinaldi", "golden-hour", ["Al Fresco"]],
+  ["Girasole Smile", 6, "serafina-bellini", "vintage-romance", []],
+  ["Parco Portrait", 7, "lucia-marchetti", "golden-hour", ["Al Fresco"]],
+  ["Summer Glow", 8, "elena-ambrosi", "golden-hour", ["Al Fresco"]],
+  ["Under the Plane Trees", 9, "carlotta-reni", "golden-hour", ["Al Fresco"]],
+  ["Blue Hour", 10, "aurora-conti", "riviera-summer", ["Al Fresco"]],
+  ["Laughing, Amalfi", 19, "giada-orsini", "riviera-summer", ["Al Fresco"]],
+  ["Gold Hour, Capri", 20, "beatrice-sole", "riviera-summer", ["Al Fresco"]],
+  ["Sea Breeze", 21, "nives-castellani", "riviera-summer", ["Al Fresco"]],
+  ["Sky & Salt", 22, "ottavia-neri", "riviera-summer", ["Al Fresco"]],
+  ["Eyes Closed", 23, "daria-fiore", "linen-silk", []],
+  ["Contessa at Home", 24, "ottavia-neri", "villa-nights", []],
+  ["By Candlelight", 25, "mara-vale", "noir-italiano", []],
+];
+
+export const stills: Still[] = [
+  ...dolceSeeds.map(([title, n, muse, category, tags]): Still => ({
+    slug: slugify(title), title, ...crop(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio: "landscape", badges: ["FREE"], muse, category, tags,
+  })),
+  ...stillSeeds.map(([title, n, ratio, badges, muse, category, tags]): Still => ({
+    slug: slugify(title), title, ...img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges: badges.filter((b) => b !== "FREE"), muse, category, tags,
+  })),
+];
 
 export const fantasies = [
   { by: "lazy_lucia", text: "A borrowed key to a villa that isn't mine, and a whole afternoon to explore it.", reel: "villa-segreta" },
@@ -252,9 +317,38 @@ export const packages = [
   },
 ];
 
-export const hero = vid("f02");
+// AI photoshoots for brands — all SFW.
+export const brandPackages = [
+  {
+    name: "Campagna", price: "€450", note: "per shoot",
+    blurb: "One look, one mood, ready for your feed.",
+    features: ["12 edited AI images", "1 concept & location", "Square, 4:5 and 9:16 crops", "Delivery in 5 days"],
+  },
+  {
+    name: "Lookbook", price: "€950", note: "per shoot", featured: true,
+    blurb: "A full seasonal story for your collection.",
+    features: ["30 edited AI images", "3 vertical reels (9:16)", "Up to 3 looks & locations", "Commercial licence included"],
+  },
+  {
+    name: "Atelier", price: "€1,600", note: "per month",
+    blurb: "A steady stream of on-brand content.",
+    features: ["60 images + 8 reels a month", "Consistent recurring AI model", "Priority turnaround", "Monthly creative call"],
+  },
+];
 
-export { TIER_LABEL, TIER_RANK, canAccess, type Tier } from "./tiers";
+export const brandWork: (Partial<Art> & { name: string; kind: string })[] = [
+  { name: "Costa Swim", kind: "Swimwear", ...crop(20) },
+  { name: "Acqua di Luce", kind: "Skincare", ...crop(23) },
+  { name: "Villa Bellini", kind: "Wine & hospitality", ...crop(6) },
+  { name: "Oro Fino", kind: "Jewellery", ...crop(25) },
+  { name: "Linea Capri", kind: "Resort wear", ...crop(22) },
+  { name: "Viaggio", kind: "Travel", ...crop(8) },
+];
+
+export const hero = vid("f02t", "f02");
+export const heroAlt = vid("f11t", "f11");
+
+export { LEVEL_LABEL, TIER_LABEL, TIER_RANK, canAccess, type Level, type Tier } from "./tiers";
 
 export const museBySlug = (slug: string) => muses.find((m) => m.slug === slug);
 export const reelBySlug = (slug: string) => reels.find((r) => r.slug === slug);

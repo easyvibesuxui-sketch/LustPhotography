@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { canAccess, museBySlug, type Reel } from "@/lib/data";
+import { museBySlug, visibleArt, type Reel } from "@/lib/data";
 import { useMe } from "@/lib/auth";
 import { LockOverlay } from "./Lock";
 import ArtFrame from "./ArtFrame";
@@ -80,12 +80,13 @@ export default function ReelViewer({ reels, start, onClose, top }: Props) {
         {reels.map((r, i) => {
           const muse = museBySlug(r.muses[0]);
           const on = i === active;
-          const locked = !canAccess(me?.tier, r.tier);
+          const art = visibleArt(r, me?.tier);
+          const locked = art.locked;
           return (
             <section key={r.slug} data-i={i} className={`flex snap-start snap-always items-center justify-center ${overlay ? "h-[100dvh] py-4 md:py-8" : "h-full py-3 pt-14 md:py-6"}`}>
               <div className="media relative aspect-[9/16] h-full max-h-full max-w-full" data-playing={on} data-revealed="true">
                 <div className="art">
-                  <ArtFrame {...(locked ? { ...r, video: undefined, src: r.poster } : r)} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
+                  <ArtFrame {...art} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
                 </div>
                 <div className="leak" />
                 <div className="scrim-b absolute inset-0 z-[3]" />
@@ -96,9 +97,9 @@ export default function ReelViewer({ reels, start, onClose, top }: Props) {
                 <div className="absolute bottom-0 left-0 right-16 z-10 p-4">
                   <span className="pill pill-wine mb-3">AI-generated</span>
                   <p className="font-display text-3xl italic leading-tight">{r.title}</p>
-                  {r.tags.length > 0 && (
+                  {r.tags.filter((t) => t !== "Nipslip" || me?.tier === "maison").length > 0 && (
                     <p className="mt-2 flex flex-wrap gap-1.5">
-                      {r.tags.map((t) => (
+                      {r.tags.filter((t) => t !== "Nipslip" || me?.tier === "maison").map((t) => (
                         <span key={t} className="pill pill-ghost normal-case">#{t}</span>
                       ))}
                     </p>

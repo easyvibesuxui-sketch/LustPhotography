@@ -130,6 +130,16 @@ async function api(req: Request, env: Env, path: string): Promise<Response> {
       await env.DB.prepare("INSERT OR IGNORE INTO subscribers (email, source, created_at) VALUES (?, ?, ?)").bind(email, source, now()).run();
       return json({ ok: true });
     }
+    case "/api/lead": {
+      const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      if (!validEmail(email)) return json({ error: "Enter a valid email." }, 400);
+      if (b.kind !== "brand" && b.kind !== "creator") return json({ error: "Bad request" }, 400);
+      const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) || null : null);
+      await env.DB.prepare("INSERT INTO leads (kind, name, email, company, link, budget, message, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+        .bind(b.kind, str(b.name, 120), email, str(b.company, 120), str(b.link, 300), str(b.budget, 60), str(b.message, 4000), now())
+        .run();
+      return json({ ok: true });
+    }
     case "/api/waitlist": {
       const u = await currentUser(req, env);
       if (!u) return json({ error: "Sign in first." }, 401);
@@ -144,7 +154,7 @@ async function api(req: Request, env: Env, path: string): Promise<Response> {
 const TYPES: Record<string, string> = { webp: "image/webp", jpg: "image/jpeg", mp4: "video/mp4" };
 
 async function media(req: Request, env: Env, key: string): Promise<Response> {
-  if (!/^(img|vid)\/[a-z0-9]+\.(webp|jpg|mp4)$/.test(key)) return new Response("Not found", { status: 404 });
+  if (!/^(img|vid)\/[a-z0-9]+(\.blur)?\.(webp|jpg|mp4)$/.test(key)) return new Response("Not found", { status: 404 });
   const need = tierForMedia(key);
   if (need !== "public") {
     const u = await currentUser(req, env);

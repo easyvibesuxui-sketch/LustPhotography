@@ -12,6 +12,7 @@ const nav = [
   ["Collections", "/#collections"],
   ["Fantasies", "/#fantasies"],
   ["Membership", "/pricing/"],
+  ["For Brands", "/#brands"],
   ["For Creators", "/#creators"],
 ];
 
@@ -27,7 +28,7 @@ export default function Header() {
     const on = () => setSolid(window.scrollY > 40);
     on();
     window.addEventListener("scroll", on, { passive: true });
-    setVeil(document.documentElement.dataset.veil === "on");
+    setVeil(document.documentElement.dataset.veil !== "off");
     return () => window.removeEventListener("scroll", on);
   }, []);
 

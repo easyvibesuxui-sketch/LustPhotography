@@ -14,7 +14,7 @@ export function LockPill({ need }: { need: Tier }) {
   return (
     <span className="pill pill-ghost">
       <LockGlyph size={11} />
-      {need === "free" ? "Members" : TIER_LABEL[need]}
+      {TIER_LABEL[need]}
     </span>
   );
 }
@@ -27,10 +27,10 @@ export function LockOverlay({ need, signedIn }: { need: Tier; signedIn: boolean 
         <LockGlyph size={22} />
       </span>
       <p className="font-display text-3xl leading-tight md:text-4xl">
-        {need === "free" ? "Free for members" : <>For <em className="text-brass">{TIER_LABEL[need]}</em> members</>}
+        <>For <em className="text-brass">{TIER_LABEL[need]}</em> members</>
       </p>
       <p className="max-w-xs text-sm text-parchment/80">
-        {need === "free" ? "Create a free account to watch this reel." : "Upgrade your membership to unlock this reel and everything like it."}
+        {need === "free" ? "Create a free account to watch this reel." : `Join ${TIER_LABEL[need]} to unlock this and everything like it.`}
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         {need === "free" && !signedIn ? (

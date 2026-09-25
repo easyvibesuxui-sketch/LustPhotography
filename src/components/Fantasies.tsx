@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { fantasies, reelBySlug } from "@/lib/data";
+import { fantasies, reelBySlug, visibleArt } from "@/lib/data";
+import { useMe } from "@/lib/auth";
 import ArtFrame from "./ArtFrame";
 import Reveal from "./Reveal";
 import { PlayIcon } from "./Icons";
 
 export default function Fantasies() {
   const [sent, setSent] = useState(false);
+  const { me } = useMe();
   return (
     <div className="gutter grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
       <Reveal>
@@ -49,7 +51,7 @@ export default function Fantasies() {
               <Link href={`/watch/${r.slug}`} className="group grid grid-cols-[110px_1fr] gap-5 rounded-md border border-brass/15 bg-bottle/40 p-3 transition-colors hover:border-brass/60 md:grid-cols-[150px_1fr]" data-cursor="Play">
                 <div className="media aspect-[4/5]">
                   <div className="art group-hover:scale-105">
-                    <ArtFrame {...r} seed={r.slug + "f"} alt={r.title} />
+                    <ArtFrame {...visibleArt(r, me?.tier)} seed={r.slug + "f"} alt={r.title} />
                   </div>
                 </div>
                 <div className="py-2 pr-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { canAccess, stills as allStills, type Reel } from "@/lib/data";
+import { canAccess, stills as allStills, visibleArt, type Reel } from "@/lib/data";
 import { useMe } from "@/lib/auth";
 import { LockOverlay } from "./Lock";
 import ArtFrame from "./ArtFrame";
@@ -20,7 +20,8 @@ export default function Player({ reel }: { reel: Reel }) {
   const bar = useRef<HTMLDivElement>(null);
   const short = reel.kind === "short";
   const { me } = useMe();
-  const locked = !canAccess(me?.tier, reel.tier);
+  const art = visibleArt(reel, me?.tier);
+  const locked = art.locked;
 
   const wrap = useRef<HTMLDivElement>(null);
   const el = () => wrap.current?.querySelector("video") ?? null;
@@ -64,10 +65,12 @@ export default function Player({ reel }: { reel: Reel }) {
   const related = allStills
     .map((s) => ({ s, score: (reel.muses.includes(s.muse) ? 2 : 0) + (s.category === reel.category ? 1 : 0) }))
     .sort((a, b) => b.score - a.score)
+    .map(({ s }) => visibleArt(s, me?.tier))
+    .filter((s) => !s.locked)
     .slice(0, 5)
-    .map(({ s }) => ({ ...s, seed: s.slug, caption: s.title }));
+    .map((s) => ({ ...s, seed: s.slug, caption: s.title }));
   const stills = [
-    ...(reel.poster ? [{ scene: reel.scene, tone: reel.tone, src: reel.poster, seed: `${reel.slug}-poster`, title: reel.title, caption: "Still" }] : []),
+    ...(reel.poster && canAccess(me?.tier, reel.posterTier) ? [{ scene: reel.scene, tone: reel.tone, src: reel.poster, seed: `${reel.slug}-poster`, title: reel.title, caption: "Still" }] : []),
     ...related,
   ];
 
@@ -76,7 +79,7 @@ export default function Player({ reel }: { reel: Reel }) {
       <div ref={wrap} className={`${theatre ? "" : "gutter"} transition-all duration-700`}>
         <div className={`media mx-auto ${short ? "aspect-[9/16] max-h-[82vh]" : `aspect-video ${theatre ? "!rounded-none" : ""}`}`} data-playing={playing} data-revealed="true">
           <div className="art">
-            <ArtFrame {...(locked ? { ...reel, video: undefined, src: reel.poster } : reel)} seed={reel.slug} alt={reel.title} key={locked ? "locked" : "open"} />
+            <ArtFrame {...art} seed={reel.slug} alt={reel.title} key={locked ? "locked" : "open"} />
           </div>
           <div className="leak" />
           {locked && reel.tier && <LockOverlay need={reel.tier} signedIn={!!me} />}
