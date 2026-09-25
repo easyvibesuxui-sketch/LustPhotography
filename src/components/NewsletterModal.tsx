@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ArtFrame from "./ArtFrame";
+import { stills } from "@/lib/data";
+
+const cover = stills.find((s) => s.slug === "laughing-tide");
 import { lockScroll } from "./SmoothScroll";
 
 export default function NewsletterModal() {
@@ -77,7 +80,7 @@ export default function NewsletterModal() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative hidden min-h-[440px] md:block">
-              <ArtFrame scene="riviera" tone="terracotta" seed="modal" />
+              <ArtFrame scene="riviera" tone="terracotta" seed="modal" src={cover?.src} alt="" />
               <p className="absolute bottom-6 left-6 font-script text-4xl text-ivory drop-shadow-lg">Benvenuti</p>
             </div>
             <div className="p-8 md:p-10">
