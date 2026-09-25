@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { stills as allStills, type Reel } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import Lightbox from "./Lightbox";
+import { PauseIcon, PlayIcon } from "./Icons";
 
 const toSec = (t: string) => t.split(":").reduce((a, n) => a * 60 + Number(n), 0);
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -75,7 +76,7 @@ export default function Player({ reel }: { reel: Reel }) {
           </div>
           <div className="leak" />
           <button className="absolute inset-0 z-10 flex items-center justify-center" onClick={() => setPlaying((p) => !p)} aria-label={playing ? "Pause" : "Play"} data-cursor={playing ? "Pause" : "Play"}>
-            {!playing && <span className="flex h-20 w-20 items-center justify-center rounded-full border border-brass/60 bg-forest/60 text-3xl text-ivory backdrop-blur md:h-24 md:w-24">▶</span>}
+            {!playing && <span className="flex h-20 w-20 items-center justify-center rounded-full border border-brass/60 bg-forest/60 pl-1 text-ivory backdrop-blur md:h-24 md:w-24"><PlayIcon size={26} /></span>}
           </button>
           <span className="pill pill-ghost absolute left-3 top-3 z-20">AI-generated</span>
           {current && <span className="pill pill-ghost absolute right-3 top-3 z-20">{current.label}</span>}
@@ -106,7 +107,7 @@ export default function Player({ reel }: { reel: Reel }) {
             </div>
             <div className="mt-1 flex items-center justify-between text-xs text-ivory/85">
               <div className="flex items-center gap-4">
-                <button onClick={() => setPlaying((p) => !p)} className="text-base" aria-label={playing ? "Pause" : "Play"}>{playing ? "❚❚" : "▶"}</button>
+                <button onClick={() => setPlaying((p) => !p)} className="text-base" aria-label={playing ? "Pause" : "Play"}>{playing ? <PauseIcon /> : <PlayIcon />}</button>
                 <span className="tabular-nums">{fmt(t)} / {fmt(reel.seconds)}</span>
               </div>
               {!short && (

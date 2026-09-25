@@ -126,7 +126,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
           {menu && (
             <div className="absolute right-0 top-10 w-44 overflow-hidden rounded-md border border-brass/30 bg-bottle/95 text-sm shadow-2xl backdrop-blur" role="menu">
               {[
-                [saved ? "✓ Saved" : "Save to list", () => setSaved((s) => !s)],
+                [saved ? "Saved" : "Save to list", () => setSaved((s) => !s)],
                 ["Share", () => navigator.clipboard?.writeText(`${location.origin}/watch/${reel.slug}`)],
                 ["Not interested", () => setMenu(false)],
               ].map(([label, fn]) => (

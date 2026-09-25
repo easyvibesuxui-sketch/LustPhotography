@@ -7,6 +7,7 @@ import ArtFrame from "./ArtFrame";
 import { hero } from "@/lib/data";
 import Magnetic from "./Magnetic";
 import { SplitText } from "./Reveal";
+import { PlayIcon } from "./Icons";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -48,7 +49,7 @@ export default function Hero() {
         </motion.p>
         <motion.div className="mt-9 flex flex-wrap items-center gap-3 md:gap-4" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.1, duration: 1, ease }}>
           <Magnetic>
-            <Link href="/#shorts" className="btn btn-wine">▶ Watch Shorts</Link>
+            <Link href="/#shorts" className="btn btn-wine"><PlayIcon size={12} /> Watch Shorts</Link>
           </Magnetic>
           <Magnetic>
             <Link href="/#creators" className="btn btn-brass">Build my site</Link>

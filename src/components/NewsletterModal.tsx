@@ -7,6 +7,7 @@ import { stills } from "@/lib/data";
 
 const cover = stills.find((s) => s.slug === "laughing-tide");
 import { lockScroll } from "./SmoothScroll";
+import { CloseIcon } from "./Icons";
 
 export default function NewsletterModal() {
   const [open, setOpen] = useState(false);
@@ -84,7 +85,7 @@ export default function NewsletterModal() {
               <p className="absolute bottom-6 left-6 font-script text-4xl text-ivory drop-shadow-lg">Benvenuti</p>
             </div>
             <div className="p-8 md:p-10">
-              <button onClick={() => setOpen(false)} className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-lg hover:bg-forest" aria-label="Close">✕</button>
+              <button onClick={() => setOpen(false)} className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-lg hover:bg-forest" aria-label="Close"><CloseIcon /></button>
               <p className="label">Newsletter</p>
               <h2 id="nl-title" className="mt-3 font-ui text-4xl font-bold leading-[1.02]">
                 Unlock free access to <span className="text-brass">exclusive shorts.</span>

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { openJoin } from "./Header";
+import { PlayIcon } from "./Icons";
 
 export default function FloatingCta() {
   const path = usePathname();
@@ -36,7 +37,7 @@ export default function FloatingCta() {
           <textPath href="#ring">WATCH FREE ✦ WATCH FREE ✦ WATCH FREE ✦</textPath>
         </text>
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center pl-1 text-2xl text-ivory">▶</span>
+      <span className="absolute inset-0 flex items-center justify-center pl-1 text-ivory"><PlayIcon size={22} /></span>
     </button>
   );
 }

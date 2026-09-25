@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import type { Art } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import { lockScroll } from "./SmoothScroll";
+import { CloseIcon } from "./Icons";
 
 export type LightItem = Art & { seed: string; title: string; caption?: string };
 
@@ -32,7 +33,7 @@ export default function Lightbox({ items, index, onClose }: { items: LightItem[]
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#050907]/95 p-4 backdrop-blur-md md:p-12" role="dialog" aria-modal="true" aria-label={item.title} onClick={onClose}>
       <button className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-brass/40 text-xl hover:bg-brass hover:text-forest" onClick={onClose} aria-label="Close">
-        ✕
+        <CloseIcon />
       </button>
       <button className={`${nav} left-3 md:left-8`} onClick={(e) => (e.stopPropagation(), go(-1))} aria-label="Previous image">‹</button>
       <button className={`${nav} right-3 md:right-8`} onClick={(e) => (e.stopPropagation(), go(1))} aria-label="Next image">›</button>

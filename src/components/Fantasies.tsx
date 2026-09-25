@@ -5,6 +5,7 @@ import { useState } from "react";
 import { fantasies, reelBySlug } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import Reveal from "./Reveal";
+import { PlayIcon } from "./Icons";
 
 export default function Fantasies() {
   const [sent, setSent] = useState(false);
@@ -56,7 +57,7 @@ export default function Fantasies() {
                   <p className="mt-4 flex flex-wrap items-center gap-2 text-xs text-parchment/70">
                     Based on a fantasy by <span className="pill pill-ghost normal-case">@{f.by}</span>
                   </p>
-                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-brass">▶ {r.title}</p>
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-brass flex items-center gap-2"><PlayIcon size={10} /> {r.title}</p>
                 </div>
               </Link>
             </Reveal>
