@@ -12,10 +12,7 @@ const groups: [string, [string, string][]][] = [
 ];
 
 const socials = [
-  ["Instagram", "M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm5.5-1.5h.01"],
-  ["X", "M4 4l16 16M20 4 4 20"],
-  ["Telegram", "M21 4 3 11l6 2 2 6 3-4 5 4 2-15ZM9 13l9-6"],
-  ["Reddit", "M12 8c4.4 0 8 2.2 8 5s-3.6 5-8 5-8-2.2-8-5 3.6-5 8-5Zm0 0 1-4 4 1M9 13h.01M15 13h.01M9.5 15.5c1.5 1 3.5 1 5 0"],
+  ["Instagram", "https://www.instagram.com/classygreens_", "M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm5 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm5.5-1.5h.01"],
 ];
 
 function Slogan() {
@@ -109,8 +106,8 @@ export default function Footer() {
       </div>
       <div className="gutter flex flex-col items-center justify-between gap-6 border-t border-brass/15 py-8 md:flex-row">
         <div className="flex gap-2">
-          {socials.map(([name, d]) => (
-            <a key={name} href="#" aria-label={name} className="flex h-10 w-10 items-center justify-center rounded-full border border-ivory/15 text-ivory/80 transition hover:border-brass hover:text-brass">
+          {socials.map(([name, href, d]) => (
+            <a key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={`${name} @classygreens_`} className="flex h-10 w-10 items-center justify-center rounded-full border border-ivory/15 text-ivory/80 transition hover:border-brass hover:text-brass">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                 <path d={d} />
               </svg>
