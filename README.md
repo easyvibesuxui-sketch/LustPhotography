@@ -35,12 +35,11 @@ Fonts: Cormorant Garamond, Italiana, Bodoni Moda, Pinyon Script, Manrope, Bebas 
 - Language switcher (EN / KA / IT) is UI only.
 - Legal pages (Terms, Privacy, 2257 / compliance) are not written yet.
 
-## Media (Bunny.net)
+## Media & deploy (Cloudflare)
 
-Photos and videos are **not** stored in this repo or on Netlify. They live on a Bunny.net CDN.
+Photos and videos are **not** in this repo. They ship as static assets of the Cloudflare Worker
+(`https://lust-photography.khomerik-nod.workers.dev`), and an R2 bucket `lust-media` exists for future use.
 
-1. Put optimized files in `public/media/img/iNN.webp` and `public/media/vid/<id>.mp4|.jpg` (git-ignored; `npm run dev` serves them locally).
-2. Upload: `BUNNY_STORAGE_ZONE=… BUNNY_STORAGE_KEY=… npm run media:upload`
-3. In Netlify, set `NEXT_PUBLIC_MEDIA_BASE=https://<pull-zone>.b-cdn.net` and redeploy.
-
-Without `NEXT_PUBLIC_MEDIA_BASE`, production builds show the SVG placeholders.
+- Restore media into `public/media` in a fresh checkout: `npm run media:fetch` (uses `scripts/media-manifest.txt`).
+- Deploy: `CLOUDFLARE_API_TOKEN=… npm run deploy:cf` (builds with `NEXT_PUBLIC_MEDIA_BASE=/media`, then `wrangler deploy`).
+- Builds without `NEXT_PUBLIC_MEDIA_BASE` show the SVG placeholders.

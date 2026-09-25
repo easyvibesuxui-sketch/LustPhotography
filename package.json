@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "media:upload": "node scripts/upload-media.mjs",
+    "media:fetch": "node scripts/fetch-media.mjs",
     "deploy:cf": "NEXT_PUBLIC_MEDIA_BASE=/media next build && wrangler deploy"
   },
   "dependencies": {
