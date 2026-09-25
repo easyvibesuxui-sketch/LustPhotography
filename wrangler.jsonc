@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers static-assets deploy of the exported site (`out/`).
+  // Build with NEXT_PUBLIC_MEDIA_BASE=/media so local public/media ships alongside.
+  "name": "lust-photography",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
