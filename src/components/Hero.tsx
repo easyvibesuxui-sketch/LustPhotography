@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import ArtFrame from "./ArtFrame";
+import { hero } from "@/lib/data";
 import Magnetic from "./Magnetic";
 import { SplitText } from "./Reveal";
 
@@ -22,7 +23,7 @@ export default function Hero() {
     <section ref={ref} className="relative flex h-[100svh] min-h-[620px] items-end overflow-hidden" aria-label="Featured">
       <motion.div className="absolute inset-0" style={reduce ? undefined : { scale, y }}>
         <div className="h-full w-full animate-[kenburns_24s_ease-in-out_infinite_alternate] motion-reduce:animate-none">
-          <ArtFrame scene="cypress" tone="terracotta" seed="hero" alt="Cypress trees at golden hour" />
+          <ArtFrame scene="cypress" tone="terracotta" seed="hero" alt="Featured reel" {...hero} autoPlay />
         </div>
       </motion.div>
       <div className="leak !opacity-100 [animation:leak_9s_ease-in-out_infinite]" />

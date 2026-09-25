@@ -65,7 +65,7 @@ export default function ReelViewer({ reels, start, onClose }: { reels: Reel[]; s
             <section key={r.slug} data-i={i} className="flex h-[100dvh] snap-start snap-always items-center justify-center py-4 md:py-8">
               <div className="media relative aspect-[9/16] h-full max-h-full max-w-full" data-playing={on} data-revealed="true">
                 <div className="art">
-                  <ArtFrame {...r} seed={r.slug} alt={r.title} />
+                  <ArtFrame {...r} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
                 </div>
                 <div className="leak" />
                 <div className="scrim-b absolute inset-0 z-[3]" />

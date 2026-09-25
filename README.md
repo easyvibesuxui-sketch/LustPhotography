@@ -34,3 +34,13 @@ Fonts: Cormorant Garamond, Italiana, Bodoni Moda, Pinyon Script, Manrope, Bebas 
 - Forms (newsletter, fantasy, creator brief) are front-end only — no backend yet.
 - Language switcher (EN / KA / IT) is UI only.
 - Legal pages (Terms, Privacy, 2257 / compliance) are not written yet.
+
+## Media (Bunny.net)
+
+Photos and videos are **not** stored in this repo or on Netlify. They live on a Bunny.net CDN.
+
+1. Put optimized files in `public/media/img/iNN.webp` and `public/media/vid/<id>.mp4|.jpg` (git-ignored; `npm run dev` serves them locally).
+2. Upload: `BUNNY_STORAGE_ZONE=… BUNNY_STORAGE_KEY=… npm run media:upload`
+3. In Netlify, set `NEXT_PUBLIC_MEDIA_BASE=https://<pull-zone>.b-cdn.net` and redeploy.
+
+Without `NEXT_PUBLIC_MEDIA_BASE`, production builds show the SVG placeholders.

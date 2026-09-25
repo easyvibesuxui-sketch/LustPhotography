@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Reel } from "@/lib/data";
+import { stills as allStills, type Reel } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import Lightbox from "./Lightbox";
 
 const toSec = (t: string) => t.split(":").reduce((a, n) => a * 60 + Number(n), 0);
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-// Placeholder player: simulates playback over the SVG art until real video is wired in.
+// Drives a real <video> when the reel has one; otherwise simulates playback over the SVG art.
 export default function Player({ reel }: { reel: Reel }) {
   const [t, setT] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -17,31 +17,58 @@ export default function Player({ reel }: { reel: Reel }) {
   const bar = useRef<HTMLDivElement>(null);
   const short = reel.kind === "short";
 
+  const wrap = useRef<HTMLDivElement>(null);
+  const el = () => wrap.current?.querySelector("video") ?? null;
+
   useEffect(() => {
+    const v = el();
+    if (v) {
+      if (playing) v.play().catch(() => setPlaying(false));
+      else v.pause();
+      return;
+    }
     if (!playing) return;
     const id = window.setInterval(() => setT((v) => (v + 0.25 >= reel.seconds ? (setPlaying(false), reel.seconds) : v + 0.25)), 250);
     return () => clearInterval(id);
   }, [playing, reel.seconds]);
 
+  useEffect(() => {
+    const v = el();
+    if (!v) return;
+    const on = () => setT(v.currentTime);
+    v.loop = false;
+    const end = () => setPlaying(false);
+    v.addEventListener("timeupdate", on);
+    v.addEventListener("ended", end);
+    return () => {
+      v.removeEventListener("timeupdate", on);
+      v.removeEventListener("ended", end);
+    };
+  }, []);
+
   const seek = (s: number) => {
-    setT(Math.max(0, Math.min(reel.seconds, s)));
+    const next = Math.max(0, Math.min(reel.seconds, s));
+    setT(next);
+    const v = el();
+    if (v) v.currentTime = next;
     setPlaying(true);
   };
   const current = [...reel.chapters].reverse().find((c) => toSec(c.t) <= t);
 
-  // Placeholder stills: alternate crops of the hero scene with related scenes.
-  const alt = ["linen", "curve", "wine"] as const;
-  const stills = [0, 1, 2, 3, 4, 5].map((i) => ({
-    scene: i % 2 ? alt[(i >> 1) % alt.length] : reel.scene,
-    tone: reel.tone,
-    seed: `${reel.slug}-still-${i}`,
-    title: `${reel.title} — still ${i + 1}`,
-    caption: reel.chapters[i % reel.chapters.length].label,
-  }));
+  // Stills: the reel's poster first, then images from the same muses and mood.
+  const related = allStills
+    .map((s) => ({ s, score: (reel.muses.includes(s.muse) ? 2 : 0) + (s.category === reel.category ? 1 : 0) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map(({ s }) => ({ ...s, seed: s.slug, caption: s.title }));
+  const stills = [
+    ...(reel.poster ? [{ scene: reel.scene, tone: reel.tone, src: reel.poster, seed: `${reel.slug}-poster`, title: reel.title, caption: "Still" }] : []),
+    ...related,
+  ];
 
   return (
     <>
-      <div className={`${theatre ? "" : "gutter"} transition-all duration-700`}>
+      <div ref={wrap} className={`${theatre ? "" : "gutter"} transition-all duration-700`}>
         <div className={`media mx-auto ${short ? "aspect-[9/16] max-h-[82vh]" : `aspect-video ${theatre ? "!rounded-none" : ""}`}`} data-playing={playing} data-revealed="true">
           <div className="art">
             <ArtFrame {...reel} seed={reel.slug} alt={reel.title} />
@@ -112,7 +139,7 @@ export default function Player({ reel }: { reel: Reel }) {
           {stills.map((s, i) => (
             <button key={s.seed} className="media group aspect-[4/3] w-[62vw] shrink-0 sm:w-[34vw] lg:w-[19vw]" onClick={() => setBox(i)} data-cursor="View" data-revealed="true" aria-label={`Open ${s.title}`}>
               <div className="art group-hover:scale-105">
-                <ArtFrame {...s} alt={s.title} className={i % 2 ? "" : ["scale-[1.6] origin-top-left", "scale-[1.9] origin-bottom", "scale-[1.4] origin-right"][(i >> 1) % 3]} />
+                <ArtFrame {...s} alt={s.title} />
               </div>
             </button>
           ))}

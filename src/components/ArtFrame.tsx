@@ -144,11 +144,11 @@ function SceneSvg({ scene, p, r, id }: { scene: Scene; p: Pal; r: number; id: st
   }
 }
 
-type Props = Art & { seed: string; className?: string; alt?: string };
+type Props = Art & { seed: string; className?: string; alt?: string; autoPlay?: boolean };
 
-export default function ArtFrame({ scene, tone, src, video, seed, className = "", alt = "" }: Props) {
+export default function ArtFrame({ scene, tone, src, video, poster, seed, className = "", alt = "", autoPlay = false }: Props) {
   if (video) {
-    return <video className={`h-full w-full object-cover ${className}`} src={video} muted loop playsInline preload="metadata" />;
+    return <video className={`h-full w-full object-cover ${className}`} src={video} poster={poster} muted loop playsInline autoPlay={autoPlay} preload={autoPlay ? "auto" : "none"} aria-label={alt} />;
   }
   if (src) {
     // eslint-disable-next-line @next/next/no-img-element
