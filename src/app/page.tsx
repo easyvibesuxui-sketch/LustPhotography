@@ -40,12 +40,12 @@ export default function Home() {
       </section>
 
       <section id="shorts" className="scroll-mt-20 pt-16 md:pt-24">
-        <SectionHead eyebrow="Vertical · 9:16" title="Latest Shorts" pill="New" href="/browse?type=short" />
+        <SectionHead eyebrow="Vertical · 9:16" title="Latest Shorts" pill="New" href="/shorts/" />
         <ShortsRail reels={shorts} />
       </section>
 
       <section id="images" className="scroll-mt-20 pt-16 md:pt-24">
-        <SectionHead eyebrow="Stills from the studio" title="Trending Images" href="/browse?type=image" />
+        <SectionHead eyebrow="Stills from the studio" title="Trending Images" href="/images/" />
         <StillsGrid stills={stills} />
       </section>
 

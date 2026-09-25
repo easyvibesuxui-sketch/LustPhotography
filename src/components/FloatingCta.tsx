@@ -18,7 +18,7 @@ export default function FloatingCta() {
     return () => io.disconnect();
   }, [path]);
 
-  if (path.startsWith("/watch")) return null;
+  if (path.startsWith("/watch") || path.startsWith("/shorts")) return null;
 
   return (
     <button

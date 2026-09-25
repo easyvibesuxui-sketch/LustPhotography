@@ -33,6 +33,7 @@ function StillTile({ s, onOpen }: { s: Still; onOpen: () => void }) {
       <div className="absolute inset-x-0 bottom-0 z-10 translate-y-3 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
         <p className="font-display text-xl italic">{s.title}</p>
         {muse && <p className="text-xs uppercase tracking-[0.18em] text-parchment/80">{muse.name}</p>}
+        {s.tags.length > 0 && <p className="mt-1.5 text-xs text-brass">{s.tags.map((t) => `#${t}`).join("  ")}</p>}
       </div>
       <div className="veil-note absolute inset-0 z-[8] items-center justify-center">
         <span className="pill pill-ghost">Click to reveal</span>

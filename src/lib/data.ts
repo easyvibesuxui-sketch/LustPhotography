@@ -9,6 +9,9 @@ export type Badge = "TRENDING" | "NEW" | "FREE";
 
 import { VIDEO_TIER, type Tier } from "./tiers";
 
+export const TAGS = ["Nipslip", "Naturist", "Outdoor", "Big boobs", "Small boobs"] as const;
+export type Tag = (typeof TAGS)[number];
+
 export type Art = { scene: Scene; tone: Tone; src?: string; video?: string; poster?: string; tier?: Tier };
 
 export type Chapter = { t: string; label: string };
@@ -35,6 +38,7 @@ export type Reel = Art & {
 
 export type Still = Art & {
   slug: string;
+  tags: Tag[];
   title: string;
   ratio: "portrait" | "landscape" | "square";
   badges: Badge[];
@@ -171,57 +175,57 @@ export const reels: Reel[] = [
 
   // Shorts — 9:16 reels
   ...([
-    ["morning-ritual", "Morning Ritual", "s09", "linen", "sand", "elena-ambrosi", "linen-silk", "0:10", ["NEW"]],
-    ["shutters", "Shutters", "s12", "villa", "terracotta", "livia-rinaldi", "villa-nights", "0:10", ["TRENDING"]],
-    ["salt-and-sun", "Salt & Sun", "s13", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:05", ["TRENDING"]],
-    ["sand-angel", "Sand Angel", "s14", "riviera", "sand", "beatrice-sole", "riviera-summer", "0:10", ["FREE"]],
-    ["riviera-gold", "Riviera Gold", "s16", "riviera", "terracotta", "aurora-conti", "golden-hour", "0:15", ["NEW"]],
-  ] as const).map(([slug, title, v, scene, tone, muse, category, duration, badges]): Reel => ({
+    ["morning-ritual", "Morning Ritual", "s09", "linen", "sand", "elena-ambrosi", "linen-silk", "0:10", ["NEW"], ["Big boobs"]],
+    ["shutters", "Shutters", "s12", "villa", "terracotta", "livia-rinaldi", "villa-nights", "0:10", ["TRENDING"], ["Nipslip", "Small boobs"]],
+    ["salt-and-sun", "Salt & Sun", "s13", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:05", ["TRENDING"], ["Naturist", "Outdoor"]],
+    ["sand-angel", "Sand Angel", "s14", "riviera", "sand", "beatrice-sole", "riviera-summer", "0:10", ["FREE"], ["Naturist", "Outdoor"]],
+    ["riviera-gold", "Riviera Gold", "s16", "riviera", "terracotta", "aurora-conti", "golden-hour", "0:15", ["NEW"], ["Outdoor", "Nipslip"]],
+  ] as const).map(([slug, title, v, scene, tone, muse, category, duration, badges, tags]): Reel => ({
     slug, kind: "short", title, lockup: "italic", ...vid(v), scene, tone, muses: [muse], category, duration,
     seconds: Number(duration.split(":")[1]), rating: 4.5 + (title.length % 5) / 10, badges: [...badges],
     tagline: "A breath of a moment, shot on imaginary film.",
     description: "A short, sensual vignette from the Lust Photography studio — one mood, one muse, one uninterrupted take.",
-    director: "Lust Photography", chapters: ch(["0:00", "Open"], ["0:03", "Turn"]), tags: ["Short"],
+    director: "Lust Photography", chapters: ch(["0:00", "Open"], ["0:03", "Turn"]), tags: [...tags],
   })),
 ];
 
 export const films = reels.filter((r) => r.kind === "film");
 export const shorts = reels.filter((r) => r.kind === "short");
 
-// [title, image #, ratio, badges, muse, category]
-const stillSeeds: [string, number, Still["ratio"], Badge[], string, string][] = [
-  ["Window Light, Fiesole", 1, "landscape", ["TRENDING"], "beatrice-sole", "linen-silk"],
-  ["The Mirror Room", 2, "landscape", ["NEW"], "serafina-bellini", "vintage-romance"],
-  ["Ink & Sunlight", 3, "portrait", ["TRENDING"], "livia-rinaldi", "golden-hour"],
-  ["Salotto d'Oro", 4, "landscape", [], "ottavia-neri", "villa-nights"],
-  ["Silver Chain", 5, "landscape", ["TRENDING"], "mara-vale", "noir-italiano"],
-  ["Girasole", 6, "portrait", ["FREE"], "serafina-bellini", "golden-hour"],
-  ["Parco, Sunday", 7, "portrait", ["NEW"], "lucia-marchetti", "golden-hour"],
-  ["Nine Months of Summer", 8, "portrait", [], "elena-ambrosi", "golden-hour"],
-  ["Park Bench Smile", 9, "portrait", ["TRENDING"], "carlotta-reni", "golden-hour"],
-  ["Blue Hour, Amalfi", 10, "portrait", ["NEW"], "aurora-conti", "riviera-summer"],
-  ["Black Sand", 11, "landscape", [], "giada-orsini", "riviera-summer"],
-  ["Windswept", 12, "landscape", ["FREE"], "giada-orsini", "riviera-summer"],
-  ["Sun Worship", 13, "landscape", ["TRENDING"], "beatrice-sole", "riviera-summer"],
-  ["Golden Bikini", 14, "landscape", ["NEW"], "aurora-conti", "riviera-summer"],
-  ["Salt on Skin", 15, "landscape", [], "giada-orsini", "riviera-summer"],
-  ["Shoreline Smile", 16, "landscape", ["TRENDING"], "nives-castellani", "riviera-summer"],
-  ["Mediterranean Noon", 17, "landscape", [], "daria-fiore", "riviera-summer"],
-  ["Sunlit", 18, "landscape", ["FREE"], "beatrice-sole", "riviera-summer"],
-  ["Laughing Tide", 19, "portrait", ["TRENDING"], "giada-orsini", "riviera-summer"],
-  ["Gold Strings", 20, "portrait", ["NEW"], "beatrice-sole", "riviera-summer"],
-  ["Sea Spray", 21, "portrait", [], "nives-castellani", "riviera-summer"],
-  ["Low Sun", 22, "portrait", ["TRENDING"], "ottavia-neri", "riviera-summer"],
-  ["Spa, Eyes Closed", 23, "portrait", ["NEW"], "daria-fiore", "linen-silk"],
-  ["Warm Room", 24, "portrait", [], "ottavia-neri", "linen-silk"],
-  ["Candlelit", 25, "portrait", ["FREE"], "mara-vale", "linen-silk"],
+// [title, image #, ratio, badges, muse, category, tags]
+const stillSeeds: [string, number, Still["ratio"], Badge[], string, string, Tag[]][] = [
+  ["Window Light, Fiesole", 1, "landscape", ["TRENDING"], "beatrice-sole", "linen-silk", ["Big boobs", "Nipslip"]],
+  ["The Mirror Room", 2, "landscape", ["NEW"], "serafina-bellini", "vintage-romance", ["Small boobs", "Nipslip"]],
+  ["Ink & Sunlight", 3, "portrait", ["TRENDING"], "livia-rinaldi", "golden-hour", ["Outdoor", "Big boobs"]],
+  ["Salotto d'Oro", 4, "landscape", [], "ottavia-neri", "villa-nights", ["Small boobs"]],
+  ["Silver Chain", 5, "landscape", ["TRENDING"], "mara-vale", "noir-italiano", ["Outdoor"]],
+  ["Girasole", 6, "portrait", ["FREE"], "serafina-bellini", "golden-hour", ["Outdoor", "Big boobs"]],
+  ["Parco, Sunday", 7, "portrait", ["NEW"], "lucia-marchetti", "golden-hour", ["Outdoor", "Big boobs"]],
+  ["Nine Months of Summer", 8, "portrait", [], "elena-ambrosi", "golden-hour", ["Outdoor", "Big boobs"]],
+  ["Park Bench Smile", 9, "portrait", ["TRENDING"], "carlotta-reni", "golden-hour", ["Outdoor"]],
+  ["Blue Hour, Amalfi", 10, "portrait", ["NEW"], "aurora-conti", "riviera-summer", ["Outdoor", "Nipslip"]],
+  ["Black Sand", 11, "landscape", [], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
+  ["Windswept", 12, "landscape", ["FREE"], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor", "Small boobs"]],
+  ["Sun Worship", 13, "landscape", ["TRENDING"], "beatrice-sole", "riviera-summer", ["Naturist", "Outdoor"]],
+  ["Golden Bikini", 14, "landscape", ["NEW"], "aurora-conti", "riviera-summer", ["Outdoor", "Nipslip", "Big boobs"]],
+  ["Salt on Skin", 15, "landscape", [], "giada-orsini", "riviera-summer", ["Naturist", "Outdoor"]],
+  ["Shoreline Smile", 16, "landscape", ["TRENDING"], "nives-castellani", "riviera-summer", ["Naturist", "Outdoor"]],
+  ["Mediterranean Noon", 17, "landscape", [], "daria-fiore", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
+  ["Sunlit", 18, "landscape", ["FREE"], "beatrice-sole", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
+  ["Laughing Tide", 19, "portrait", ["TRENDING"], "giada-orsini", "riviera-summer", ["Outdoor", "Nipslip"]],
+  ["Gold Strings", 20, "portrait", ["NEW"], "beatrice-sole", "riviera-summer", ["Outdoor", "Nipslip"]],
+  ["Sea Spray", 21, "portrait", [], "nives-castellani", "riviera-summer", ["Naturist", "Outdoor", "Big boobs"]],
+  ["Low Sun", 22, "portrait", ["TRENDING"], "ottavia-neri", "riviera-summer", ["Naturist", "Outdoor"]],
+  ["Spa, Eyes Closed", 23, "portrait", ["NEW"], "daria-fiore", "linen-silk", ["Small boobs"]],
+  ["Warm Room", 24, "portrait", [], "ottavia-neri", "linen-silk", ["Big boobs"]],
+  ["Candlelit", 25, "portrait", ["FREE"], "mara-vale", "linen-silk", ["Nipslip"]],
 ];
 
 const toneFor: Record<string, Tone> = { "riviera-summer": "dusk", "golden-hour": "sand", "linen-silk": "sand", "villa-nights": "wine", "vintage-romance": "terracotta", "noir-italiano": "noir" };
 
-export const stills: Still[] = stillSeeds.map(([title, n, ratio, badges, muse, category]) => ({
+export const stills: Still[] = stillSeeds.map(([title, n, ratio, badges, muse, category, tags]) => ({
   slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-  title, src: img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges, muse, category,
+  title, src: img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges, muse, category, tags,
 }));
 
 export const fantasies = [

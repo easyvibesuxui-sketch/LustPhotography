@@ -6,8 +6,8 @@ import Magnetic from "./Magnetic";
 import { useMe } from "@/lib/auth";
 
 const nav = [
-  ["Shorts", "/#shorts"],
-  ["Images", "/#images"],
+  ["Shorts", "/shorts/"],
+  ["Images", "/images/"],
   ["Muses", "/#muses"],
   ["Collections", "/#collections"],
   ["Fantasies", "/#fantasies"],
