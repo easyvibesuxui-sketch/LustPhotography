@@ -29,6 +29,23 @@ export const LEVEL_TIER: Record<Level, Tier> = { dolce: "public", boudoir: "aman
 export const VIDEO_LEVEL: Record<string, Level> = {
   f02t: "dolce", // SFW teaser cut of f02 (hero)
   f11t: "dolce", // SFW teaser cut of f11
+  n01: "boudoir",
+  n02: "dolce",
+  n03: "boudoir",
+  n04: "boudoir",
+  n05: "prive",
+  n06: "prive",
+  n07: "dolce",
+  n08: "boudoir",
+  n09: "boudoir",
+  n10: "boudoir",
+  n11: "boudoir",
+  n12: "prive",
+  n13: "prive",
+  n14: "prive",
+  n15: "boudoir",
+  n16: "prive",
+  n17: "boudoir",
   d01: "dolce", // swimwear
   d02: "dolce",
   d04: "dolce",
@@ -50,6 +67,23 @@ export const VIDEO_LEVEL: Record<string, Level> = {
 
 // Poster frames can be tamer than the video they belong to.
 export const POSTER_LEVEL: Record<string, Level> = {
+  n01: "boudoir",
+  n02: "dolce",
+  n03: "boudoir",
+  n04: "boudoir",
+  n05: "prive",
+  n06: "prive",
+  n07: "dolce",
+  n08: "boudoir",
+  n09: "boudoir",
+  n10: "boudoir",
+  n11: "boudoir",
+  n12: "prive",
+  n13: "prive",
+  n14: "prive",
+  n15: "boudoir",
+  n16: "prive",
+  n17: "boudoir",
   d01: "dolce",
   d02: "dolce",
   d04: "dolce",
