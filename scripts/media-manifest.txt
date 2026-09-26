@@ -1,3 +1,5 @@
+img/b29.blur.webp
+img/b29.webp
 img/c03.webp
 img/c06.webp
 img/c07.webp
@@ -12,6 +14,8 @@ img/c23.webp
 img/c24.webp
 img/c25.webp
 img/c26.webp
+img/c27.webp
+img/c28.webp
 img/i01.blur.webp
 img/i01.webp
 img/i02.blur.webp
@@ -62,6 +66,8 @@ img/i24.blur.webp
 img/i24.webp
 img/i25.blur.webp
 img/i25.webp
+img/i30.blur.webp
+img/i30.webp
 vid/d01.blur.webp
 vid/d01.jpg
 vid/d01.mp4

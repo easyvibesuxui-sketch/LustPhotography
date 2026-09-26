@@ -63,8 +63,8 @@ export const POSTER_LEVEL: Record<string, Level> = {
   s14: "boudoir",
 };
 
-// iNN = full stills (all explicit); cNN = shoulders-up crops (SFW).
-export const imageLevel = (id: string): Level => (id.startsWith("c") ? "dolce" : "prive");
+// cNN = SFW (crops, swimwear), bNN = Boudoir, iNN = explicit stills.
+export const imageLevel = (id: string): Level => (id.startsWith("c") ? "dolce" : id.startsWith("b") ? "boudoir" : "prive");
 
 export const canAccess = (have: Tier | undefined, need: Tier | undefined) =>
   TIER_RANK[have ?? "public"] >= TIER_RANK[need ?? "public"];

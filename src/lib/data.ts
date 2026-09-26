@@ -84,6 +84,12 @@ const img = (n: number): Partial<Art> => {
 };
 // Shoulders-up SFW crop of still n — safe for every public surface.
 const crop = (n: number): Partial<Art> => ({ level: "dolce", tier: "public", ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
+// Any image by id (c = Dolce Vita, b = Boudoir, i = Privé); gated ones get a blur teaser.
+const pic = (id: string): Partial<Art> => {
+  const level = imageLevel(id);
+  const blur = level !== "dolce";
+  return { level, tier: LEVEL_TIER[level], ...(MEDIA ? { src: `${MEDIA}/img/${id}.webp`, ...(blur ? { blur: `${MEDIA}/img/${id}.blur.webp` } : {}) } : {}) };
+};
 // Video + poster, each with its own level. `posterOf` borrows another poster (for teaser cuts).
 const vid = (id: string, posterOf = id): Partial<Art> => {
   const level = VIDEO_LEVEL[id] ?? "prive";
@@ -289,9 +295,20 @@ const dolceSeeds: [string, number, string, string, Tag[]][] = [
   ["Robe & Candlelight", 26, "daria-fiore", "linen-silk", []],
 ];
 
+// Newer uploads, any level: [title, media id, ratio, muse, category, tags]
+const extraSeeds: [string, string, Still["ratio"], string, string, Tag[]][] = [
+  ["Turquoise Tide", "c27", "portrait", "giada-orsini", "riviera-summer", ["Al Fresco"]],
+  ["Black Crochet", "c28", "portrait", "mara-vale", "riviera-summer", ["Al Fresco", "Curves"]],
+  ["Raw Linen Bikini", "b29", "portrait", "elena-ambrosi", "riviera-summer", ["Al Fresco", "Curves"]],
+  ["Riviera, 1974", "i30", "landscape", "serafina-bellini", "riviera-summer", ["Au Naturel", "Al Fresco"]],
+];
+
 export const stills: Still[] = [
   ...dolceSeeds.map(([title, n, muse, category, tags]): Still => ({
     slug: slugify(title), title, ...crop(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio: "landscape", badges: ["FREE"], muse, category, tags,
+  })),
+  ...extraSeeds.map(([title, id, ratio, muse, category, tags]): Still => ({
+    slug: slugify(title), title, ...pic(id), scene: "riviera", tone: "dusk", ratio, badges: ["NEW"], muse, category, tags,
   })),
   ...stillSeeds.map(([title, n, ratio, badges, muse, category, tags]): Still => ({
     slug: slugify(title), title, ...img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges: badges.filter((b) => b !== "FREE"), muse, category, tags,
