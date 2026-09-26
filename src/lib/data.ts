@@ -493,6 +493,34 @@ export const brandWork: (Partial<Art> & { name: string; kind: string })[] = [
 ];
 
 export const hero = vid("f02t", "f02");
+
+// Hero banners: Dolce Vita (SFW) reels only, each plays once then hands off to the next.
+export const heroSlides = [
+  {
+    ...vid("d02"),
+    eyebrow: "AI reels & images · Est. 2026 · Toscana",
+    title: ["La Dolce", "Lussuria"],
+    sub: "Desire, shot on film. Imagined by AI.",
+    cta: { label: "Watch Shorts", href: "/shorts/" },
+    alt: { label: "Join free", href: "/account/" },
+  },
+  {
+    ...vid("n07"),
+    eyebrow: "New · Lust Shorts",
+    title: ["Grace in", "Gold Light"],
+    sub: "An old studio, a barre, the last hour of sun.",
+    cta: { label: "Watch the reel", href: "/shorts/" },
+    alt: { label: "See all images", href: "/images/" },
+  },
+  {
+    ...vid("n02"),
+    eyebrow: "For brands · AI photoshoots",
+    title: ["Your campaign,", "in Tuscany"],
+    sub: "Swimwear, skincare, wine — shot without the flights.",
+    cta: { label: "Start a shoot", href: "/#brands" },
+    alt: { label: "Membership", href: "/pricing/" },
+  },
+];
 export const heroAlt = vid("f11t", "f11");
 
 export { LEVEL_LABEL, TIER_LABEL, TIER_RANK, canAccess, type Level, type Tier } from "./tiers";
