@@ -215,8 +215,12 @@ export const reels: Reel[] = [
     tags: ["Beach", "Sun", "Slow"],
   },
 
-  // Shorts — 9:16 reels
+  // Shorts — 9:16 reels. Dolce Vita (swimwear) first so every visitor starts on something they can watch.
   ...([
+    ["amalfi-laughs", "Amalfi Laughs", "d02", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:15", ["NEW"], ["Al Fresco"]],
+    ["leopard-noon", "Leopard at Noon", "d01", "riviera", "sand", "serafina-bellini", "riviera-summer", "0:05", ["TRENDING"], ["Al Fresco", "Curves"]],
+    ["sky-and-sand", "Sky & Sand", "d04", "riviera", "sand", "ottavia-neri", "golden-hour", "0:05", ["NEW"], ["Al Fresco", "Curves"]],
+    ["oro-di-mare", "Oro di Mare", "d03", "riviera", "terracotta", "elena-ambrosi", "riviera-summer", "0:05", ["TRENDING"], ["Al Fresco", "Curves"]],
     ["morning-ritual", "Morning Ritual", "s09", "linen", "sand", "elena-ambrosi", "linen-silk", "0:10", ["NEW"], ["Curves"]],
     ["shutters", "Shutters", "s12", "villa", "terracotta", "livia-rinaldi", "villa-nights", "0:10", ["TRENDING"], ["Nipslip", "Petite"]],
     ["salt-and-sun", "Salt & Sun", "s13", "riviera", "dusk", "giada-orsini", "riviera-summer", "0:05", ["TRENDING"], ["Au Naturel", "Al Fresco"]],
@@ -282,6 +286,7 @@ const dolceSeeds: [string, number, string, string, Tag[]][] = [
   ["Eyes Closed", 23, "daria-fiore", "linen-silk", []],
   ["Contessa at Home", 24, "ottavia-neri", "villa-nights", []],
   ["By Candlelight", 25, "mara-vale", "noir-italiano", []],
+  ["Robe & Candlelight", 26, "daria-fiore", "linen-silk", []],
 ];
 
 export const stills: Still[] = [
@@ -337,8 +342,8 @@ export const brandPackages = [
 ];
 
 export const brandWork: (Partial<Art> & { name: string; kind: string })[] = [
-  { name: "Costa Swim", kind: "Swimwear", ...crop(20) },
-  { name: "Acqua di Luce", kind: "Skincare", ...crop(23) },
+  { name: "Costa Swim", kind: "Swimwear", level: "dolce", tier: "public", ...(MEDIA ? { src: `${MEDIA}/vid/d02.jpg` } : {}) },
+  { name: "Acqua di Luce", kind: "Skincare", ...crop(26) },
   { name: "Villa Bellini", kind: "Wine & hospitality", ...crop(6) },
   { name: "Oro Fino", kind: "Jewellery", ...crop(25) },
   { name: "Linea Capri", kind: "Resort wear", ...crop(22) },
