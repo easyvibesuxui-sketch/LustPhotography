@@ -100,19 +100,14 @@ export default function Hero() {
           aria-roledescription="slide"
           aria-label={`${i + 1} of ${heroSlides.length}`}
         >
-          {/* Ambient backdrop: the poster, blurred to fill the frame */}
-          <div className="absolute inset-0 scale-110 opacity-70 blur-2xl">
-            <ArtFrame scene="cypress" tone="terracotta" seed={`hero-bg-${i}`} src={slide.poster} alt="" />
-          </div>
-          <div className="absolute inset-0 bg-forest/40" />
-          {/* The reel itself: full-bleed on phones, a framed 9:16 panel on wide screens */}
-          <div className="absolute inset-0 md:inset-y-[8vh] md:left-auto md:right-[calc(var(--gutter)+4rem)] md:aspect-[9/16] md:overflow-hidden md:rounded-md md:border md:border-brass/40 md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.8)]">
+          {/* The reel, full-bleed; portrait reels are anchored high so faces stay in frame on wide screens */}
+          <div className="absolute inset-0">
             {useVideo ? (
               <video
                 ref={(el) => {
                   if (el) video.current = el;
                 }}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-[50%_28%]"
                 src={slide.video}
                 poster={slide.poster}
                 muted
@@ -139,7 +134,8 @@ export default function Hero() {
       </AnimatePresence>
 
       <div className="leak !opacity-100 [animation:leak_9s_ease-in-out_infinite]" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest via-forest/25 to-black/30 md:bg-gradient-to-r md:from-forest/95 md:via-forest/40 md:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-forest via-forest/30 to-black/20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))]" />
 
       {/* Letterbox bars */}
       <motion.div className="absolute inset-x-0 top-0 z-10 bg-black" initial={{ height: "50%" }} animate={{ height: "5vh" }} transition={{ duration: 1.6, ease }} />
