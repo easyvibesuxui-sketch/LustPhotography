@@ -3,7 +3,7 @@ import Reveal from "./Reveal";
 
 export default function SectionHead({ eyebrow, title, pill, href, children }: { eyebrow?: string; title: string; pill?: string; href?: string; children?: React.ReactNode }) {
   return (
-    <Reveal className="gutter mb-7 flex items-end justify-between gap-6">
+    <Reveal className="gutter mb-10 flex md:mb-16 items-end justify-between gap-6">
       <div>
         {eyebrow && <p className="label mb-3">{eyebrow}</p>}
         <h2 className="flex flex-wrap items-center gap-3 font-ui text-3xl font-bold uppercase leading-none tracking-[0.01em] text-ivory md:text-5xl">

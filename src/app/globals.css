@@ -38,7 +38,7 @@
 
 :root {
   color-scheme: dark;
-  --gutter: clamp(16px, 4vw, 56px);
+  --gutter: clamp(20px, 6vw, 112px);
 }
 
 html {

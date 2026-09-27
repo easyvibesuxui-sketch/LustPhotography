@@ -70,9 +70,9 @@ export default function StillsGrid({ stills }: { stills: Still[] }) {
   const items = open_.map((s) => ({ ...s, seed: s.slug, caption: museBySlug(s.muse)?.name }));
   return (
     <>
-      <div className="gutter columns-2 gap-3 md:columns-3 md:gap-4 xl:columns-4">
+      <div className="gutter columns-2 gap-4 md:columns-3 md:gap-8">
         {views.map((s, i) => (
-          <Reveal key={s.slug} delay={(i % 4) * 0.08} className="mb-3 break-inside-avoid md:mb-4">
+          <Reveal key={s.slug} delay={(i % 4) * 0.08} className="mb-4 break-inside-avoid md:mb-8">
             <StillTile s={s} onOpen={() => setOpen(open_.indexOf(s))} />
           </Reveal>
         ))}

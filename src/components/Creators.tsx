@@ -43,7 +43,7 @@ export default function Creators() {
       </div>
 
       {/* Packages */}
-      <div className="gutter mt-14 grid gap-4 md:grid-cols-3">
+      <div className="gutter mt-16 grid gap-6 md:grid-cols-3 md:gap-8">
         {packages.map((p, i) => (
           <Reveal key={p.name} delay={i * 0.1}>
             <article className={`relative flex h-full flex-col rounded-md border p-7 md:p-8 ${paper} ${p.featured ? "border-brass bg-bottle" : "border-brass/20 bg-bottle/40"}`}>

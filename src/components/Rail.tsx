@@ -76,7 +76,7 @@ export default function Rail({ children, className = "", label }: { children: Re
         onPointerUp={onUp}
         onPointerLeave={onUp}
         onClickCapture={onClickCapture}
-        className={`rail gutter flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-[var(--gutter)] py-5 md:gap-4 ${className}`}
+        className={`rail gutter flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-[var(--gutter)] py-5 md:gap-6 ${className}`}
         data-cursor-rail
       >
         {children}

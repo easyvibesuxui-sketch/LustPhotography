@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { visibleArt, type Reel } from "@/lib/data";
+import { categoryBySlug, museBySlug, visibleArt, type Reel } from "@/lib/data";
 import { useMe } from "@/lib/auth";
 import { LockPill } from "./Lock";
 import ArtFrame from "./ArtFrame";
@@ -78,7 +78,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
 
   return (
     <div
-      className={`media group shrink-0 snap-start transition-transform duration-700 ease-[var(--ease-film)] hover:z-10 hover:scale-[1.04] ${short ? "aspect-[9/16]" : "aspect-video"} ${className}`}
+      className={`media group shrink-0 snap-start transition-transform duration-700 ease-[var(--ease-film)] hover:z-10 ${short ? "hover:scale-[1.04]" : "hover:scale-[1.015]"} ${short ? "aspect-[9/16]" : "aspect-video"} ${className}`}
       data-playing={playing}
       data-revealed={revealed}
       onPointerEnter={(e) => e.pointerType === "mouse" && start()}
@@ -101,7 +101,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
       <div className={`${short ? "scrim-b" : "scrim-poster"} absolute inset-0 z-[3]`} />
 
       {/* Top bar: badges at rest, rating + duration + menu while playing */}
-      <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-2 p-2.5 md:p-3">
+      <div className={`absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-2 ${short ? "p-2.5 md:p-3" : "p-3.5 md:p-5"}`}>
         <div className="flex flex-wrap gap-1.5">
           {playing ? (
             <>
@@ -118,7 +118,8 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
             </>
           ) : (
             <>
-              {reel.badges.map((b) => (
+              {/* One badge at rest keeps the poster quiet */}
+              {reel.badges.slice(0, 1).map((b) => (
                 <span key={b} className={`pill pill-${b}`}>
                   {b}
                 </span>
@@ -153,20 +154,13 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
       </div>
 
       {/* Title */}
-      <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-[6] p-3 md:p-4 ${short ? "" : "pr-16"}`}>
+      <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-[6] ${short ? "p-3 md:p-4" : "p-4 md:p-6"}`}>
         {short ? (
           <p className="font-sans text-base font-bold leading-snug md:text-lg">{reel.title}</p>
         ) : (
           <PosterTitle title={reel.title} lockup={reel.lockup} />
         )}
       </div>
-      {!short && (
-        <span className="pointer-events-none absolute bottom-3 right-3 z-[6] text-right font-bodoni text-[0.7rem] leading-[0.9] tracking-wide text-ivory/80">
-          LUST
-          <br />
-          PHOTO
-        </span>
-      )}
 
       {/* Progress bar */}
       <div className="absolute inset-x-0 bottom-0 z-[7] h-[3px] bg-ivory/10">
@@ -192,5 +186,22 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
         data-cursor="Play"
       />
     </div>
+  );
+}
+
+// A film poster with a quiet caption underneath, for roomy grids.
+export function FilmTile({ reel }: { reel: Reel }) {
+  const meta = [categoryBySlug(reel.category)?.title, reel.muses.map((m) => museBySlug(m)?.name).filter(Boolean)[0]].filter(Boolean).join(" · ");
+  return (
+    <figure className="flex flex-col gap-4 md:gap-5">
+      <ReelCard reel={reel} />
+      <figcaption className="flex items-baseline justify-between gap-4 px-0.5">
+        <span className="flex min-w-0 flex-col gap-1">
+          <span className="truncate text-lg font-semibold text-ivory">{reel.title}</span>
+          {meta && <span className="truncate text-[0.95rem] text-parchment/65">{meta}</span>}
+        </span>
+        <span className="shrink-0 font-ui text-[0.95rem] tracking-[0.08em] text-parchment/65">{reel.duration}</span>
+      </figcaption>
+    </figure>
   );
 }

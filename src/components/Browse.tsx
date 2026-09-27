@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { categories, collections, muses, reels, stills, museBySlug } from "@/lib/data";
-import ReelCard from "./ReelCard";
+import ReelCard, { FilmTile } from "./ReelCard";
 import StillsGrid from "./StillsGrid";
 import MuseCard from "./MuseCard";
 
@@ -109,15 +109,15 @@ export default function Browse() {
       {films.length > 0 && (
         <section className="mt-12">
           <h2 className="gutter label mb-4">Films · {films.length}</h2>
-          <div className="gutter grid gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-3">
-            {films.map((r) => <ReelCard key={r.slug} reel={r} />)}
+          <div className="gutter grid gap-x-8 gap-y-14 sm:grid-cols-2 md:gap-x-10 md:gap-y-16 lg:grid-cols-3">
+            {films.map((r) => <FilmTile key={r.slug} reel={r} />)}
           </div>
         </section>
       )}
       {shorts.length > 0 && (
         <section className="mt-12">
           <h2 className="gutter label mb-4">Shorts · {shorts.length}</h2>
-          <div className="gutter grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-5">
+          <div className="gutter grid grid-cols-2 gap-5 sm:grid-cols-3 md:gap-8 lg:grid-cols-4">
             {shorts.map((r) => <ReelCard key={r.slug} reel={r} />)}
           </div>
         </section>
