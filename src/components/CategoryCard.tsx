@@ -12,14 +12,23 @@ const wash: Record<string, string> = {
   "noir-italiano": "#4b4f58",
 };
 
+// Keep faces in frame when a portrait still is cropped to the 4:3 tile.
+const focus: Record<string, string> = {
+  "riviera-summer": "object-[50%_6%]",
+  "vintage-romance": "object-[50%_25%]",
+  "golden-hour": "object-[50%_22%]",
+  "linen-silk": "object-[50%_40%]",
+  "noir-italiano": "object-[50%_35%]",
+};
+
 export default function CategoryCard({ c }: { c: Category }) {
   return (
-    <Link href={`/browse?category=${c.slug}`} className="media group block aspect-[4/3] w-[72vw] shrink-0 snap-start sm:w-[44vw] md:w-[31vw] lg:w-[23.5vw]" data-cursor="Explore">
+    <Link href={`/browse?category=${c.slug}`} className="media group block aspect-[4/3] w-[72vw] shrink-0 snap-start sm:w-[44vw] md:w-[31vw] lg:w-[23.5vw]" data-cursor="Explore" data-sfw>
       <div className="art group-hover:scale-105">
-        <ArtFrame {...c} seed={c.slug} alt={c.title} />
+        <ArtFrame {...c} seed={c.slug} alt={c.title} className={focus[c.slug]} />
       </div>
-      <div className="absolute inset-0 z-[3] opacity-45 mix-blend-color transition-opacity duration-700 group-hover:opacity-20" style={{ background: wash[c.slug] }} />
-      <div className="absolute inset-0 z-[3] transition-opacity duration-700 group-hover:opacity-70" style={{ background: `linear-gradient(to top, ${wash[c.slug]}f2 0%, ${wash[c.slug]}66 38%, transparent 70%)` }} />
+      <div className="absolute inset-0 z-[3] opacity-25 mix-blend-color transition-opacity duration-700 group-hover:opacity-20" style={{ background: wash[c.slug] }} />
+      <div className="absolute inset-0 z-[3] transition-opacity duration-700 group-hover:opacity-70" style={{ background: `linear-gradient(to top, ${wash[c.slug]}e6 0%, ${wash[c.slug]}40 34%, transparent 62%)` }} />
       <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center pb-6">
         <p className="font-display text-4xl leading-none tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] md:text-5xl">{c.title}</p>
         <span className="mt-2 block h-px w-0 bg-brass transition-all duration-700 ease-[var(--ease-film)] group-hover:w-24" />

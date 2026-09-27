@@ -4,7 +4,7 @@ import ArtFrame from "./ArtFrame";
 
 export default function CollectionTile({ c }: { c: Collection }) {
   return (
-    <Link href={`/browse?collection=${c.slug}`} className="media group block aspect-[4/5] md:aspect-square" data-cursor="Open">
+    <Link href={`/browse?collection=${c.slug}`} className="media group block aspect-[4/5] md:aspect-square" data-cursor="Open" data-sfw>
       <div className="art sepia-[0.3] group-hover:scale-105 group-hover:sepia-0">
         <ArtFrame {...c} seed={c.slug} alt={c.title} />
       </div>

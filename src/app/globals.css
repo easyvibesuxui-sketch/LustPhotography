@@ -220,12 +220,13 @@ body {
 }
 
 /* Veil (NSFW blur) */
-html[data-veil="on"] .media:not([data-revealed="true"]) .art {
+/* SFW tiles (categories, collections) opt out with data-sfw */
+html[data-veil="on"] .media:not([data-revealed="true"]):not([data-sfw]) .art {
   filter: blur(22px) saturate(0.8);
   transform: scale(1.12);
 }
 .veil-note { display: none; }
-html[data-veil="on"] .media:not([data-revealed="true"]) .veil-note { display: flex; }
+html[data-veil="on"] .media:not([data-revealed="true"]):not([data-sfw]) .veil-note { display: flex; }
 
 /* Scrollbars on rails */
 .rail {

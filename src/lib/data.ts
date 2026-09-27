@@ -113,12 +113,12 @@ export function visibleArt<T extends Art>(a: T, have: Tier | undefined): T & { l
 }
 
 export const categories: Category[] = [
-  { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", ...crop(24) },
-  { slug: "riviera-summer", title: "Riviera Summer", scene: "riviera", tone: "dusk", ...crop(20) },
-  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", ...crop(6) },
-  { slug: "golden-hour", title: "Golden Hour", scene: "cypress", tone: "sand", ...crop(8) },
-  { slug: "linen-silk", title: "Linen & Silk", scene: "linen", tone: "sand", ...crop(23) },
-  { slug: "noir-italiano", title: "Noir Italiano", scene: "blinds", tone: "noir", ...crop(25) },
+  { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", ...pic("c61") },
+  { slug: "riviera-summer", title: "Riviera Summer", scene: "riviera", tone: "dusk", ...pic("c27") },
+  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", ...pic("c138") },
+  { slug: "golden-hour", title: "Golden Hour", scene: "cypress", tone: "sand", ...pic("c130") },
+  { slug: "linen-silk", title: "Linen & Silk", scene: "linen", tone: "sand", ...pic("c151") },
+  { slug: "noir-italiano", title: "Noir Italiano", scene: "blinds", tone: "noir", ...pic("c51") },
 ];
 
 export const collections: Collection[] = [
