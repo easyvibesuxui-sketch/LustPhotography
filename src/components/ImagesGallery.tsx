@@ -6,8 +6,12 @@ import StillsGrid from "./StillsGrid";
 import TagFilter, { readTag, tagsFor, writeTag } from "./TagFilter";
 import { useMe } from "@/lib/auth";
 
+// Rendered in pages so a large archive doesn't mount hundreds of tiles at once.
+const PAGE = 48;
+
 export default function ImagesGallery() {
   const [tag, setTag] = useState<Tag | null>(null);
+  const [shown, setShown] = useState(PAGE);
   const { me } = useMe();
   const tags = tagsFor(me?.tier);
   useEffect(() => setTag(readTag()), []);
@@ -17,6 +21,7 @@ export default function ImagesGallery() {
 
   const pick = (t: Tag | null) => {
     setTag(t);
+    setShown(PAGE);
     writeTag(t);
   };
 
@@ -31,7 +36,14 @@ export default function ImagesGallery() {
         </p>
       </div>
       <TagFilter tags={tags} active={tag} onChange={pick} counts={counts} className="mb-8 md:px-[var(--gutter)]" />
-      <StillsGrid key={tag ?? "all"} stills={list} />
+      <StillsGrid key={tag ?? "all"} stills={list.slice(0, shown)} />
+      {shown < list.length && (
+        <div className="mt-12 flex justify-center">
+          <button className="btn btn-brass" onClick={() => setShown((n) => n + PAGE)}>
+            Show more · {list.length - shown}
+          </button>
+        </div>
+      )}
     </>
   );
 }
