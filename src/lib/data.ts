@@ -122,10 +122,10 @@ export const categories: Category[] = [
 ];
 
 export const collections: Collection[] = [
-  { slug: "slow-burn", title: "Slow Burn", subtitle: "For those who savour every second.", scene: "curve", tone: "terracotta", ...crop(22) },
-  { slug: "inspired-by-cinema", title: "Inspired by Cinema", subtitle: "Cinecittà dreams, 1963.", scene: "blinds", tone: "noir", ...crop(3) },
-  { slug: "grand-tour", title: "The Grand Tour", subtitle: "Florence to Amalfi, one stolen summer.", scene: "road", tone: "olive", ...crop(9) },
-  { slug: "from-the-archive", title: "From the Archive", scene: "villa", tone: "sand", ...crop(7) },
+  { slug: "slow-burn", title: "Slow Burn", subtitle: "For those who savour every second.", scene: "curve", tone: "terracotta", ...pic("c26") },
+  { slug: "inspired-by-cinema", title: "Inspired by Cinema", subtitle: "Cinecittà dreams, 1963.", scene: "blinds", tone: "noir", ...pic("c374") },
+  { slug: "grand-tour", title: "The Grand Tour", subtitle: "Florence to Amalfi, one stolen summer.", scene: "road", tone: "olive", ...pic("c201") },
+  { slug: "from-the-archive", title: "From the Archive", scene: "villa", tone: "sand", ...pic("c199") },
 ];
 
 export const muses: Muse[] = [
