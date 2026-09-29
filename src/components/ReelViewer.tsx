@@ -84,7 +84,7 @@ export default function ReelViewer({ reels, start, onClose, top }: Props) {
           const locked = art.locked;
           return (
             <section key={r.slug} data-i={i} className={`flex snap-start snap-always items-center justify-center ${overlay ? "h-[100dvh] py-4 md:py-8" : "h-full py-3 pt-14 md:py-6"}`}>
-              <div className="media relative aspect-[9/16] h-full max-h-full max-w-full" data-playing={on} data-revealed="true">
+              <div className="media relative h-full max-h-full max-w-full" style={{ aspectRatio: r.aspect ?? 9 / 16 }} data-playing={on} data-revealed="true">
                 <div className="art">
                   <ArtFrame {...art} seed={r.slug} alt={r.title} autoPlay={on} key={on ? "on" : "off"} />
                 </div>

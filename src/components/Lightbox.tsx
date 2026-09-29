@@ -29,6 +29,7 @@ export default function Lightbox({ items, index, onClose }: { items: LightItem[]
   }, []);
 
   const item = items[i];
+  const ratio = item.aspect ?? 4 / 5;
   const nav = "absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-brass/40 bg-forest/70 text-2xl text-ivory backdrop-blur hover:bg-brass hover:text-forest";
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#050907]/95 p-4 backdrop-blur-md md:p-12" role="dialog" aria-modal="true" aria-label={item.title} onClick={onClose}>
@@ -47,7 +48,11 @@ export default function Lightbox({ items, index, onClose }: { items: LightItem[]
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="media aspect-[4/5] max-h-[78vh] w-auto max-w-full md:aspect-[3/2]" data-revealed="true" style={{ height: "78vh" }}>
+          <div
+            className="media max-w-full"
+            data-revealed="true"
+            style={{ aspectRatio: ratio, height: `min(78vh, calc((100vw - 2rem) / ${ratio}))` }}
+          >
             <div className="art">
               <ArtFrame {...item} alt={item.title} />
             </div>

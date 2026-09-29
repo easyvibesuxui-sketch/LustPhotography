@@ -19,7 +19,7 @@ function StillTile({ s, onOpen }: { s: View; onOpen: () => void }) {
   if (s.locked) {
     // Blurred teaser only; the full image is gated server-side.
     return (
-      <Link href="/pricing/" className={`media group block w-full ${ratio[s.ratio]}`} data-revealed="true" data-cursor="Unlock" aria-label={`Unlock image: ${s.title}`}>
+      <Link href="/pricing/" className={`media group block w-full ${s.aspect ? "" : ratio[s.ratio]}`} style={s.aspect ? { aspectRatio: s.aspect } : undefined} data-revealed="true" data-cursor="Unlock" aria-label={`Unlock image: ${s.title}`}>
         <div className="art scale-110 blur-md">
           <ArtFrame {...s} seed={s.slug} alt="" />
         </div>
@@ -32,7 +32,8 @@ function StillTile({ s, onOpen }: { s: View; onOpen: () => void }) {
   }
   return (
     <button
-      className={`media group block w-full text-left ${ratio[s.ratio]}`}
+      className={`media group block w-full text-left ${s.aspect ? "" : ratio[s.ratio]}`}
+      style={s.aspect ? { aspectRatio: s.aspect } : undefined}
       data-revealed={revealed}
       data-cursor="View"
       onClick={() => {

@@ -70,14 +70,23 @@ export default function Player({ reel }: { reel: Reel }) {
     .slice(0, 5)
     .map((s) => ({ ...s, seed: s.slug, caption: s.title }));
   const stills = [
-    ...(reel.poster && canAccess(me?.tier, reel.posterTier) ? [{ scene: reel.scene, tone: reel.tone, src: reel.poster, seed: `${reel.slug}-poster`, title: reel.title, caption: "Still" }] : []),
+    ...(reel.poster && canAccess(me?.tier, reel.posterTier) ? [{ scene: reel.scene, tone: reel.tone, src: reel.poster, aspect: reel.aspect, seed: `${reel.slug}-poster`, title: reel.title, caption: "Still" }] : []),
     ...related,
   ];
+
+  // Match the original file: 16:9 films stay wide, 9:16 reels stay tall.
+  const ratio = reel.aspect ?? (short ? 9 / 16 : 16 / 9);
+  const portrait = ratio < 1;
 
   return (
     <>
       <div ref={wrap} className={`${theatre ? "" : "gutter"} transition-all duration-700`}>
-        <div className={`media mx-auto ${short ? "aspect-[9/16] max-h-[82vh]" : `aspect-video ${theatre ? "!rounded-none" : ""}`}`} data-playing={playing} data-revealed="true">
+        <div
+          className={`media mx-auto ${portrait ? "max-h-[82vh]" : `w-full ${theatre ? "!rounded-none" : ""}`}`}
+          style={portrait ? { aspectRatio: ratio, height: "82vh", maxWidth: "100%" } : { aspectRatio: ratio, maxWidth: `calc(82vh * ${ratio})` }}
+          data-playing={playing}
+          data-revealed="true"
+        >
           <div className="art">
             <ArtFrame {...art} seed={reel.slug} alt={reel.title} key={locked ? "locked" : "open"} />
           </div>

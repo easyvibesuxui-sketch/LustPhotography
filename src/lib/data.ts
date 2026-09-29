@@ -8,6 +8,7 @@ export type Lockup = "bodoni" | "italiana" | "script" | "condensed" | "italic" |
 export type Badge = "TRENDING" | "NEW" | "FREE";
 
 import { canAccess, imageLevel, LEVEL_TIER, POSTER_LEVEL, VIDEO_LEVEL, type Level, type Tier } from "./tiers";
+import { DIMS } from "./dims";
 
 // Public tags. "Nipslip" is Privé-only: hidden from filters for everyone else.
 export const TAGS = ["Au Naturel", "Al Fresco", "Curves", "Petite", "Nipslip"] as const;
@@ -27,6 +28,8 @@ export type Art = {
   blur?: string;
   posterTier?: Tier;
   posterBlur?: string;
+  /** Width ÷ height of the original file, so frames can match it. */
+  aspect?: number;
 };
 
 export type Chapter = { t: string; label: string };
@@ -77,18 +80,22 @@ export type Collection = Art & { slug: string; title: string; subtitle?: string 
 // With no base in a production build, items keep their SVG placeholder art.
 const MEDIA = process.env.NEXT_PUBLIC_MEDIA_BASE ?? (process.env.NODE_ENV === "development" ? "/media" : "");
 const pad = (n: number) => String(n).padStart(2, "0");
+const aspectOf = (key: string) => {
+  const d = DIMS[key];
+  return d ? { aspect: d[0] / d[1] } : {};
+};
 // Full still (Privé) with its blurred teaser.
 const img = (n: number): Partial<Art> => {
   const level = imageLevel(`i${pad(n)}`);
-  return { level, tier: LEVEL_TIER[level], ...(MEDIA ? { src: `${MEDIA}/img/i${pad(n)}.webp`, blur: `${MEDIA}/img/i${pad(n)}.blur.webp` } : {}) };
+  return { level, tier: LEVEL_TIER[level], ...aspectOf(`img/i${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/i${pad(n)}.webp`, blur: `${MEDIA}/img/i${pad(n)}.blur.webp` } : {}) };
 };
 // Shoulders-up SFW crop of still n — safe for every public surface.
-const crop = (n: number): Partial<Art> => ({ level: "dolce", tier: "public", ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
+const crop = (n: number): Partial<Art> => ({ level: "dolce", tier: "public", ...aspectOf(`img/c${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
 // Any image by id (c = Dolce Vita, b = Boudoir, i = Privé); gated ones get a blur teaser.
 const pic = (id: string): Partial<Art> => {
   const level = imageLevel(id);
   const blur = level !== "dolce";
-  return { level, tier: LEVEL_TIER[level], ...(MEDIA ? { src: `${MEDIA}/img/${id}.webp`, ...(blur ? { blur: `${MEDIA}/img/${id}.blur.webp` } : {}) } : {}) };
+  return { level, tier: LEVEL_TIER[level], ...aspectOf(`img/${id}`), ...(MEDIA ? { src: `${MEDIA}/img/${id}.webp`, ...(blur ? { blur: `${MEDIA}/img/${id}.blur.webp` } : {}) } : {}) };
 };
 // Video + poster, each with its own level. `posterOf` borrows another poster (for teaser cuts).
 const vid = (id: string, posterOf = id): Partial<Art> => {
@@ -98,6 +105,7 @@ const vid = (id: string, posterOf = id): Partial<Art> => {
     level,
     tier: LEVEL_TIER[level],
     posterTier: LEVEL_TIER[pl],
+    ...aspectOf(`vid/${id}`),
     ...(MEDIA ? { video: `${MEDIA}/vid/${id}.mp4`, poster: `${MEDIA}/vid/${posterOf}.jpg`, posterBlur: `${MEDIA}/vid/${posterOf}.blur.webp` } : {}),
   };
 };
