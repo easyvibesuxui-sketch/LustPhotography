@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Soundtrack from "./Soundtrack";
 import { useEffect, useState } from "react";
 import Magnetic from "./Magnetic";
 import { useMe } from "@/lib/auth";
@@ -59,6 +60,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <Soundtrack />
           <button
             onClick={toggleVeil}
             aria-pressed={veil}

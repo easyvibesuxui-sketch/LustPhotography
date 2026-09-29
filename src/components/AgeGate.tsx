@@ -27,6 +27,8 @@ export default function AgeGate() {
     document.documentElement.dataset.age = "ok";
     lockScroll(false);
     setOpen(false);
+    // The click is a user gesture, so the soundtrack may start now.
+    window.dispatchEvent(new Event("lp:enter"));
   };
 
   const pillBase = "flex h-[52px] items-center justify-center rounded-full px-8 font-ui text-base font-bold uppercase tracking-[0.16em] transition md:h-14";

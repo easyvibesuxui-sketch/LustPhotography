@@ -277,3 +277,9 @@ html[data-age="ok"] .age-gate { display: none; }
   from { transform: translateY(-100%); }
   to { transform: translateY(200%); }
 }
+
+/* Soundtrack equalizer */
+@keyframes eq {
+  from { transform: scaleY(0.25); }
+  to { transform: scaleY(1); }
+}
