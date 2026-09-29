@@ -44,6 +44,18 @@ export default function Header() {
     return () => window.removeEventListener("scroll", on);
   }, []);
 
+  // Privé members have everything unlocked: no veil, no click-to-reveal.
+  const prive = me?.tier === "maison";
+  useEffect(() => {
+    try {
+      if (prive) localStorage.setItem("lp-prive", "1");
+      else if (me) localStorage.removeItem("lp-prive");
+    } catch {}
+    if (!prive) return;
+    document.documentElement.dataset.veil = "off";
+    setVeil(false);
+  }, [prive, me]);
+
   const toggleVeil = () => {
     const next = !veil;
     setVeil(next);
@@ -77,7 +89,7 @@ export default function Header() {
 
         <div className="flex items-center gap-2 md:gap-3">
           <Soundtrack />
-          <button
+          {!prive && <button
             onClick={toggleVeil}
             aria-pressed={veil}
             className="hidden h-10 items-center gap-2 rounded-full border border-ivory/15 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-parchment hover:border-brass sm:flex"
@@ -85,7 +97,7 @@ export default function Header() {
           >
             <span className={`h-2 w-2 rounded-full ${veil ? "bg-brass" : "bg-ivory/30"}`} />
             Veil
-          </button>
+          </button>}
           <Link href="/browse" aria-label="Search" className="flex h-10 w-10 items-center justify-center rounded-full text-ivory/85 hover:text-brass">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
               <circle cx="11" cy="11" r="7" />
@@ -115,7 +127,7 @@ export default function Header() {
           ))}
           <div className="mt-auto flex gap-3">
             <Link href="/account/" className="btn btn-wine flex-1" onClick={() => setMenu(false)}>{me ? "Account" : "Join free"}</Link>
-            <button className="btn btn-brass" onClick={toggleVeil} aria-pressed={veil}>Veil {veil ? "on" : "off"}</button>
+            {!prive && <button className="btn btn-brass" onClick={toggleVeil} aria-pressed={veil}>Veil {veil ? "on" : "off"}</button>}
           </div>
         </nav>
       )}

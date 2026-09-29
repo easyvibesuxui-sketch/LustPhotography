@@ -57,5 +57,9 @@ export async function signIn(mode: "login" | "register", data: Record<string, un
 
 export async function signOut() {
   await post("/api/logout", {});
+  try {
+    localStorage.removeItem("lp-prive");
+    if (localStorage.getItem("lp-veil") !== "off") document.documentElement.dataset.veil = "on";
+  } catch {}
   set(null);
 }
