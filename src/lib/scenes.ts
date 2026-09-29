@@ -89,5 +89,7 @@ export const SCENE_OF: Record<string, string> = {
   b578: "garage", b579: "banya", b580: "garage", b581: "river", b582: "banya", i583: "studio", b584: "kommunalka",
   b585: "garage", i586: "parco", b587: "promenade", c588: "climb", i589: "studio", b590: "dacha", b591: "dacha",
   i592: "parco", i593: "studio", c594: "garage", b595: "river", b596: "dacha", i597: "parco", c598: "dacha",
-  i599: "parco", b600: "dacha", i601: "promenade", i602: "promenade",
+  i599: "parco", b600: "dacha", i601: "promenade", i602: "promenade", i603: "storm", i604: "storm",
+  i605: "promenade", i606: "beach", i607: "storm", i608: "parco", i609: "storm", i610: "parco", i611: "storm",
+  i612: "promenade", c613: "storm", i614: "promenade", b615: "storm", i616: "storm", i617: "storm", i618: "storm",
 };

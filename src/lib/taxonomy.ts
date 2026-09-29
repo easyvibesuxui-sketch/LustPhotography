@@ -7,7 +7,7 @@ import { SCENE_OF } from "./scenes";
 export type Setting =
   | "dacha" | "kommunalka" | "library" | "interview" | "banya" | "spa" | "garage" | "kolkhoz" | "river"
   | "parco" | "piazza" | "promenade" | "beach" | "sea" | "lunapark" | "bus" | "climb" | "studio" | "ballet"
-  | "villa" | "nonna" | "truck";
+  | "villa" | "nonna" | "truck" | "storm";
 
 type Rule = { collection: string; category: string; muse: string; outdoor: boolean; names: string[] };
 
@@ -25,6 +25,7 @@ export const SETTINGS: Record<Setting, Rule> = {
   piazza: { collection: "la-dolce-vita", category: "villa-nights", muse: "livia-rinaldi", outdoor: true, names: ["Piazza"] },
   promenade: { collection: "the-promenade", category: "riviera-summer", muse: "livia-rinaldi", outdoor: true, names: ["The Promenade", "Palm Row", "Seaside Bench", "Sunset Promenade", "Ink & Salt"] },
   beach: { collection: "beach-days", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Beach Days", "Salt Skin", "Sun Flare", "Shoreline", "Wind in Her Hair"] },
+  storm: { collection: "storm-report", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Storm Report", "Live from the Shore", "Gale Warning", "Breaking Waves", "On Air", "Wind Advisory"] },
   sea: { collection: "beach-days", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Deep Blue"] },
   lunapark: { collection: "luna-park", category: "vintage-romance", muse: "aurora-conti", outdoor: true, names: ["Luna Park", "Cotton Candy", "The Ride", "Coaster"] },
   bus: { collection: "luna-park", category: "vintage-romance", muse: "aurora-conti", outdoor: false, names: ["Window Seat", "Last Bus"] },

@@ -66,3 +66,7 @@ kolkhoz b541 b546 c549
 villa b46
 promenade c247 i487
 garage b266
+storm i603 i604 i607 i609 i611 c613 b615 i616 i617 i618
+promenade i605 i612 i614
+beach i606
+parco i608 i610
