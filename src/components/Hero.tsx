@@ -138,7 +138,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))]" />
 
       {/* Letterbox bars */}
-      <motion.div className="absolute inset-x-0 top-0 z-10 bg-black" initial={{ height: "50%" }} animate={{ height: "5vh" }} transition={{ duration: 1.6, ease }} />
+      <motion.div className="absolute inset-x-0 top-0 z-10 bg-black" initial={{ height: "50%" }} animate={{ height: "0%" }} transition={{ duration: 1.6, ease }} />
       <motion.div className="absolute inset-x-0 bottom-0 z-10 bg-black" initial={{ height: "50%" }} animate={{ height: "5vh" }} transition={{ duration: 1.6, ease }} />
 
       <motion.div className="gutter relative z-20 w-full pb-[14vh] md:max-w-[62%]" style={reduce ? undefined : { y: textY, opacity: fade }}>

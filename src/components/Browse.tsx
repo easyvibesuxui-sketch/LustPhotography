@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { categories, collections, muses, reels, stills, museBySlug } from "@/lib/data";
@@ -64,6 +65,7 @@ export default function Browse() {
   const people = muses.filter((m) => (type === "all" || type === "muse") && !category && !collection && match(m.name + " " + m.tags.join(" ") + " " + m.from));
   const films = list.filter((r) => r.kind === "film");
   const shorts = list.filter((r) => r.kind === "short");
+  const moodCollections = collections.filter((c) => stills.some((s) => s.category === category && s.collection === c.slug) || reels.some((r) => r.category === category && r.collection === c.slug));
   const heading = categories.find((c) => c.slug === category)?.title ?? collections.find((c) => c.slug === collection)?.title ?? "Browse";
 
   const chip = (on: boolean) => `shrink-0 rounded-full border px-4 py-2 text-sm transition ${on ? "border-brass bg-brass text-forest" : "border-ivory/15 hover:border-brass"}`;
@@ -71,7 +73,19 @@ export default function Browse() {
 
   return (
     <div>
-      <PageHead eyebrow="The archive" title={heading}>
+      <PageHead
+        eyebrow="The archive"
+        title={heading}
+        trail={heading === "Browse" ? [["Home", "/"], ["Browse"]] : [["Home", "/"], ["Browse", "/browse/"], [heading]]}
+      >
+        {category && moodCollections.length > 0 && (
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <span className="font-ui text-xs font-semibold uppercase tracking-[0.2em] text-parchment/60">Collections in this mood:</span>
+            {moodCollections.map((c) => (
+              <Link key={c.slug} href={`/collection/${c.slug}/`} className="pill pill-wine hover:brightness-110">{c.title}</Link>
+            ))}
+          </div>
+        )}
         <label className="mt-8 flex max-w-xl items-center gap-3 border-b border-brass/40 pb-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-brass" aria-hidden>
             <circle cx="11" cy="11" r="7" />

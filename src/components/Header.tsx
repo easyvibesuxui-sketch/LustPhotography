@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Soundtrack from "./Soundtrack";
 import { useEffect, useState } from "react";
 import Magnetic from "./Magnetic";
@@ -24,6 +25,16 @@ export default function Header() {
   const [menu, setMenu] = useState(false);
   const [veil, setVeil] = useState(false);
   const { me } = useMe();
+  const path = usePathname();
+  // Which top-level section the current page belongs to, so the nav shows "you are here".
+  const section = (href: string) => {
+    const p = path.replace(/\/$/, "") || "/";
+    // Browse and watch pages mix films and shorts; their breadcrumb shows the level instead.
+    if (href.startsWith("/browse")) return false;
+    if (href === "/collections/") return p === "/collections" || p.startsWith("/collection/");
+    if (href === "/muses/") return p === "/muses" || p.startsWith("/muse/");
+    return !href.startsWith("/#") && p === href.replace(/\/$/, "");
+  };
 
   useEffect(() => {
     const on = () => setSolid(window.scrollY > 40);
@@ -43,7 +54,7 @@ export default function Header() {
   };
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${solid || menu ? "border-b border-brass/20 bg-bottle/90 backdrop-blur-md" : "bg-gradient-to-b from-black/50 to-transparent"}`}>
+    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${solid || menu ? "border-b border-brass/20 bg-bottle/90 backdrop-blur-md" : "bg-gradient-to-b from-black/70 via-black/35 to-transparent"}`}>
       <div className="gutter flex h-16 items-center justify-between gap-6 md:h-20">
         <Link href="/" className="group flex items-baseline gap-2" aria-label="Lust Photography — home">
           <span className="font-bodoni text-[1.35rem] font-black tracking-tight sm:text-2xl md:text-[1.7rem]">LUST</span>
@@ -52,9 +63,14 @@ export default function Header() {
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
           {nav.map(([label, href]) => (
-            <Link key={href} href={href} className="group relative text-[0.8rem] font-medium tracking-wide text-ivory/85 hover:text-ivory">
+            <Link
+              key={href}
+              href={href}
+              aria-current={section(href) ? "page" : undefined}
+              className={`group relative text-[0.8rem] font-medium tracking-wide hover:text-ivory ${section(href) ? "text-brass" : "text-ivory/85"}`}
+            >
               {label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-brass transition-all duration-500 group-hover:w-full" />
+              <span className={`absolute -bottom-1 left-0 h-px bg-brass transition-all duration-500 group-hover:w-full ${section(href) ? "w-full" : "w-0"}`} />
             </Link>
           ))}
         </nav>
@@ -64,7 +80,7 @@ export default function Header() {
           <button
             onClick={toggleVeil}
             aria-pressed={veil}
-            className="hidden items-center gap-2 rounded-full border border-ivory/15 px-3 py-2 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-parchment hover:border-brass sm:flex"
+            className="hidden h-10 items-center gap-2 rounded-full border border-ivory/15 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-parchment hover:border-brass sm:flex"
             title="Blur media until clicked"
           >
             <span className={`h-2 w-2 rounded-full ${veil ? "bg-brass" : "bg-ivory/30"}`} />
@@ -93,7 +109,7 @@ export default function Header() {
       {menu && (
         <nav className="gutter flex h-[calc(100dvh-4rem)] flex-col gap-1 pb-10 pt-6 lg:hidden" aria-label="Mobile">
           {nav.map(([label, href], i) => (
-            <Link key={href} href={href} onClick={() => setMenu(false)} className="border-b border-brass/15 py-4 font-display text-4xl font-light italic" style={{ animation: `fadeUp .6s ${i * 0.05}s both` }}>
+            <Link key={href} href={href} onClick={() => setMenu(false)} aria-current={section(href) ? "page" : undefined} className={`border-b border-brass/15 py-4 font-display text-4xl font-light italic ${section(href) ? "text-brass" : ""}`} style={{ animation: `fadeUp .6s ${i * 0.05}s both` }}>
               {label}
             </Link>
           ))}

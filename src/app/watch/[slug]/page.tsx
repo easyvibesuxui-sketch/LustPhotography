@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { categoryBySlug, museBySlug, reelBySlug, reels } from "@/lib/data";
+import { categoryBySlug, collections, museBySlug, reelBySlug, reels } from "@/lib/data";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Player from "@/components/Player";
 import Rail from "@/components/Rail";
 import ReelCard from "@/components/ReelCard";
@@ -16,10 +17,18 @@ export default async function Watch({ params }: { params: Promise<{ slug: string
   const reel = reelBySlug((await params).slug);
   if (!reel) notFound();
   const cat = categoryBySlug(reel.category);
-  const more = reels.filter((r) => r.slug !== reel.slug && r.kind === reel.kind).sort((a) => (a.category === reel.category ? -1 : 1));
+  const col = collections.find((c) => c.slug === reel.collection);
+  const sameSet = reels.filter((r) => r.slug !== reel.slug && r.collection === reel.collection);
+  const more = reels.filter((r) => r.slug !== reel.slug && r.kind === reel.kind && r.collection !== reel.collection).sort((a) => (a.category === reel.category ? -1 : 1));
+  const section: [string, string] = reel.kind === "film" ? ["Films", "/browse/?type=film"] : ["Shorts", "/shorts/"];
+  const size = (r: (typeof reels)[number]) => (r.kind === "short" ? "w-[46vw] sm:w-[30vw] md:w-[21vw] lg:w-[16.5vw]" : "w-[80vw] sm:w-[46vw] lg:w-[31vw]");
 
   return (
     <div className="pt-24 md:pt-28">
+      <Breadcrumbs
+        trail={[["Home", "/"], section, ...(col ? ([[col.title, `/collection/${col.slug}/`]] as [string, string][]) : []), [reel.title]]}
+        className="gutter mb-6"
+      />
       <Player reel={reel} />
 
       <div className="gutter mt-14 grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-20">
@@ -50,7 +59,7 @@ export default async function Watch({ params }: { params: Promise<{ slug: string
               {reel.muses.map((s) => {
                 const m = museBySlug(s);
                 return m ? (
-                  <Link key={s} href={`/muse/${s}`} className="font-display text-xl text-ivory underline decoration-brass/50 underline-offset-4 hover:text-brass">
+                  <Link key={s} href={`/muse/${s}/`} className="font-display text-xl text-ivory underline decoration-brass/50 underline-offset-4 hover:text-brass">
                     {m.name}
                   </Link>
                 ) : null;
@@ -67,9 +76,17 @@ export default async function Watch({ params }: { params: Promise<{ slug: string
               <dd className="font-display text-2xl">{reel.duration}</dd>
             </div>
           </div>
+          {col && (
+            <div>
+              <dt className="text-parchment/60">Collection</dt>
+              <dd>
+                <Link href={`/collection/${col.slug}/`} className="font-display text-xl hover:text-brass">{col.title}</Link>
+              </dd>
+            </div>
+          )}
           {cat && (
             <div>
-              <dt className="text-parchment/60">Category</dt>
+              <dt className="text-parchment/60">Mood</dt>
               <dd>
                 <Link href={`/browse?category=${cat.slug}`} className="font-display text-xl hover:text-brass">{cat.title}</Link>
               </dd>
@@ -79,11 +96,24 @@ export default async function Watch({ params }: { params: Promise<{ slug: string
         </dl>
       </div>
 
+      {col && sameSet.length > 0 && (
+        <section className="pt-20">
+          <div className="gutter mb-2 flex items-baseline justify-between gap-6">
+            <h2 className="font-display text-4xl font-light">More from {col.title}</h2>
+            <Link href={`/collection/${col.slug}/`} className="font-ui font-semibold text-ivory/90 hover:text-brass">Open collection →</Link>
+          </div>
+          <Rail label={`More from ${col.title}`}>
+            {sameSet.map((r) => (
+              <ReelCard key={r.slug} reel={r} className={size(r)} />
+            ))}
+          </Rail>
+        </section>
+      )}
       <section className="pt-20">
         <h2 className="gutter mb-2 font-display text-4xl font-light">More like this</h2>
         <Rail label="More like this">
           {more.map((r) => (
-            <ReelCard key={r.slug} reel={r} className={r.kind === "short" ? "w-[46vw] sm:w-[30vw] md:w-[21vw] lg:w-[16.5vw]" : "w-[80vw] sm:w-[46vw] lg:w-[31vw]"} />
+            <ReelCard key={r.slug} reel={r} className={size(r)} />
           ))}
         </Rail>
       </section>
