@@ -7,7 +7,7 @@ import { SCENE_OF } from "./scenes";
 export type Setting =
   | "dacha" | "kommunalka" | "library" | "interview" | "banya" | "spa" | "garage" | "kolkhoz" | "river"
   | "parco" | "piazza" | "promenade" | "beach" | "sea" | "lunapark" | "bus" | "climb" | "studio" | "ballet"
-  | "villa" | "nonna" | "truck" | "storm";
+  | "villa" | "nonna" | "truck" | "storm" | "auto";
 
 type Rule = { collection: string; category: string; muse: string; outdoor: boolean; names: string[] };
 
@@ -25,6 +25,7 @@ export const SETTINGS: Record<Setting, Rule> = {
   piazza: { collection: "la-dolce-vita", category: "villa-nights", muse: "livia-rinaldi", outdoor: true, names: ["Piazza"] },
   promenade: { collection: "the-promenade", category: "riviera-summer", muse: "livia-rinaldi", outdoor: true, names: ["The Promenade", "Palm Row", "Seaside Bench", "Sunset Promenade", "Ink & Salt"] },
   beach: { collection: "beach-days", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Beach Days", "Salt Skin", "Sun Flare", "Shoreline", "Wind in Her Hair"] },
+  auto: { collection: "autostrada", category: "villa-nights", muse: "ottavia-neri", outdoor: true, names: ["Autostrada, 1976", "On the Bonnet", "Chrome & Skin", "Tuscan Road", "Parked in the Hills", "Hot Engine", "The Old Coupé", "Siesta Stop"] },
   storm: { collection: "storm-report", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Storm Report", "Live from the Shore", "Gale Warning", "Breaking Waves", "On Air", "Wind Advisory"] },
   sea: { collection: "beach-days", category: "riviera-summer", muse: "giada-orsini", outdoor: true, names: ["Deep Blue"] },
   lunapark: { collection: "luna-park", category: "vintage-romance", muse: "aurora-conti", outdoor: true, names: ["Luna Park", "Cotton Candy", "The Ride", "Coaster"] },
@@ -44,7 +45,7 @@ const VIDEO_SETTING: Record<string, Setting> = {
   n09: "nonna", n10: "villa", n11: "parco", n12: "villa", n13: "villa", n14: "villa", n15: "villa", n16: "villa",
   n17: "villa", n18: "parco", n19: "parco", n20: "parco", n21: "beach", n22: "beach", n23: "beach", n24: "beach",
   n25: "beach", n26: "studio", n27: "beach", n28: "beach", d01: "beach", d02: "beach", d03: "beach", d04: "beach",
-  s09: "villa", s12: "villa", s13: "beach", s14: "beach", s16: "beach",
+  s09: "villa", n29: "auto", n30: "auto", n31: "dacha", s12: "villa", s13: "beach", s14: "beach", s16: "beach",
 };
 
 export const settingOf = (id?: string): Setting | undefined =>
