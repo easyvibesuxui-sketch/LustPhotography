@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Site-wide soundtrack. Browsers only allow sound after a user gesture, so it
-// starts on the age-gate "Enter" click (or a returning visitor's first tap),
-// unless they turned it off before. The reels themselves stay muted.
+// Site-wide soundtrack (not tied to any video — the reels stay muted). Browsers
+// only allow sound after a user gesture, so it starts on the age-gate "Enter"
+// click (or a returning visitor's first tap) unless they turned it off before.
+// It plays the song once; when it ends the toggle shows "off" and can replay it.
 const KEY = "lp-sound";
 const VOLUME = 0.55;
 
@@ -31,6 +32,7 @@ export default function Soundtrack() {
     const a = audio.current;
     if (!a) return;
     a.volume = 0;
+    if (a.ended) a.currentTime = 0;
     a.play()
       .then(() => {
         setOn(true);
@@ -81,25 +83,28 @@ export default function Soundtrack() {
 
   return (
     <>
-      <audio ref={audio} src="/audio/la-dolce.mp3" loop preload="none" />
+      <audio ref={audio} src="/audio/la-dolce.mp3" preload="none" onEnded={() => setOn(false)} />
       <button
         onClick={toggle}
         onPointerDown={(e) => e.stopPropagation()}
-        className="flex h-10 min-w-10 items-center justify-center gap-2 rounded-full border border-ivory/15 px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-parchment transition-colors hover:border-brass hover:text-brass"
+        className={`flex h-10 min-w-10 items-center justify-center gap-2 rounded-full border px-3 text-[0.65rem] font-bold uppercase tracking-[0.18em] transition-colors hover:border-brass hover:text-brass ${on ? "border-brass/60 text-brass" : "border-ivory/15 text-parchment"}`}
         title={on ? "Music on" : "Music off"}
         aria-pressed={on}
-        aria-label={on ? "Turn music off" : "Turn music on"}
+        aria-label="Music"
       >
-        <span className="flex h-3.5 items-end gap-[3px]" aria-hidden>
-          {[0, 1, 2, 3].map((i) => (
-            <span
-              key={i}
-              className="w-[2px] rounded-full bg-brass"
-              style={on ? { height: "100%", transformOrigin: "bottom", animation: `eq 0.9s ${i * 0.15}s ease-in-out infinite alternate` } : { height: 3, opacity: 0.5 }}
-            />
-          ))}
-        </span>
-        <span className="hidden sm:inline">Music</span>
+        {/* Speaker: sound waves while playing, a slash when muted */}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor" fillOpacity={0.15} />
+          {on ? (
+            <>
+              <path d="M16 9.5a3.5 3.5 0 0 1 0 5" className="origin-left animate-pulse" />
+              <path d="M18.5 7a7 7 0 0 1 0 10" />
+            </>
+          ) : (
+            <path d="m17 9 5 6m0-6-5 6" />
+          )}
+        </svg>
+        <span className="hidden sm:inline">{on ? "Music" : "Muted"}</span>
       </button>
     </>
   );

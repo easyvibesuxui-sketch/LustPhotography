@@ -25,7 +25,7 @@ export default function Account() {
           Plan: <span className="text-brass">{me.tier === "free" ? "Free" : TIER_LABEL[me.tier]}</span>
         </p>
         <div className="mt-8 flex flex-col gap-3">
-          <Link href="/#shorts" className="btn btn-wine">Watch now</Link>
+          <Link href="/shorts/" className="btn btn-wine">Watch now</Link>
           {me.tier !== "maison" && <Link href="/pricing/" className="btn btn-brass">Upgrade</Link>}
           <button onClick={() => signOut()} className="mt-2 text-sm text-parchment/70 underline-offset-4 hover:underline">
             Sign out

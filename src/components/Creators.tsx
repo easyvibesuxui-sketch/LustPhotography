@@ -5,7 +5,7 @@ import { packages } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
 import Rail from "./Rail";
 import Reveal from "./Reveal";
-import { post } from "@/lib/auth";
+import { useSubmit } from "@/lib/useSubmit";
 
 const steps = [
   ["01", "Consult", "A call about your brand, audience, platforms and what you earn from today."],
@@ -26,6 +26,7 @@ const paper = "bg-[radial-gradient(ellipse_at_top,rgba(241,232,214,0.07),transpa
 
 export default function Creators() {
   const [sent, setSent] = useState(false);
+  const { busy, error, submit } = useSubmit("/api/lead", () => setSent(true));
   return (
     <div>
       <div className="gutter grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-end">
@@ -128,8 +129,7 @@ export default function Creators() {
           ) : (
             <form className={`grid gap-4 rounded-md border border-brass/25 bg-bottle/60 p-6 md:grid-cols-2 md:p-8 ${paper}`} onSubmit={async (e) => {
               e.preventDefault();
-              const res = await post("/api/lead", { kind: "creator", ...Object.fromEntries(new FormData(e.currentTarget)) });
-              if (!res.error) setSent(true);
+              await submit({ kind: "creator", ...Object.fromEntries(new FormData(e.currentTarget)) });
             }}>
               <p className="font-display text-3xl md:col-span-2">Tell us about your brand</p>
               {[
@@ -159,7 +159,8 @@ export default function Creators() {
                 <input type="checkbox" required className="mt-0.5 h-4 w-4 accent-[var(--color-brass)]" />
                 I am 18+ and agree to be contacted about my project.
               </label>
-              <button className="btn btn-wine md:col-span-2">Send my brief</button>
+              {error && <p className="text-sm text-wine-hot md:col-span-2" role="alert">{error}</p>}
+              <button className="btn btn-wine disabled:opacity-60 md:col-span-2" disabled={busy}>{busy ? "Sending…" : "Send my brief"}</button>
             </form>
           )}
         </Reveal>

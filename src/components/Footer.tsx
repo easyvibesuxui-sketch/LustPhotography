@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { post } from "@/lib/auth";
+import { useSubmit } from "@/lib/useSubmit";
 
 const slogan = "La Dolce Lussuria";
 
 const groups: [string, [string, string][]][] = [
-  ["This is Lust Photography", [["About", "/#creators"], ["Shorts", "/#shorts"], ["Images", "/#images"], ["Muses", "/#muses"], ["Journal", "/browse"], ["Affiliates", "/#creators"]]],
+  ["This is Lust Photography", [["Films", "/browse/?type=film"], ["Shorts", "/shorts/"], ["Images", "/images/"], ["Collections", "/collections/"], ["Muses", "/muses/"], ["Fantasies", "/#fantasies"], ["For Brands", "/#brands"], ["For Creators", "/#creators"]]],
   ["FAQ, Contact & Legal", [["Contact", "/#creators"], ["Privacy Policy", "#"], ["Cookies Policy", "#"], ["Terms & Conditions", "#"], ["Billing Support", "#"], ["Compliance Statement", "#"], ["Complaints & Content Removal", "#"], ["Anti-Trafficking Statement", "#"]]],
 ];
 
@@ -60,6 +60,7 @@ function Slogan() {
 export default function Footer() {
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
+  const { busy, error, submit } = useSubmit("/api/subscribe", () => setSent(true));
   const [lang, setLang] = useState("EN");
   return (
     <footer className="relative mt-24 border-t border-brass/15 bg-[#0a130e]">
@@ -83,9 +84,7 @@ export default function Footer() {
           onSubmit={async (e) => {
             e.preventDefault();
             if (!agree) return;
-            const email = new FormData(e.currentTarget).get("email");
-            const res = await post("/api/subscribe", { email, source: "footer" });
-            if (!res.error) setSent(true);
+            await submit({ email: new FormData(e.currentTarget).get("email"), source: "footer" });
           }}
         >
           <p className="font-ui text-2xl font-bold leading-tight">
@@ -103,7 +102,8 @@ export default function Footer() {
                 <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="h-4 w-4 accent-[var(--color-brass)]" required />
                 I accept the <a href="#" className="underline underline-offset-2">terms and conditions</a>.
               </label>
-              <button className="btn btn-wine mt-5 w-full">Watch for free</button>
+              <button className="btn btn-wine mt-5 w-full disabled:opacity-60" disabled={busy}>{busy ? "One moment…" : "Watch for free"}</button>
+              {error && <p className="mt-3 text-sm text-wine-hot" role="alert">{error}</p>}
             </>
           )}
         </form>

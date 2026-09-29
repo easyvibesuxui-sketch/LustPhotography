@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ArtFrame from "./ArtFrame";
 import { stills } from "@/lib/data";
-import { post } from "@/lib/auth";
+import { useSubmit } from "@/lib/useSubmit";
 
 const cover = stills.find((s) => s.slug === "laughing-amalfi");
 import { lockScroll } from "./SmoothScroll";
@@ -14,6 +14,7 @@ export default function NewsletterModal() {
   const [open, setOpen] = useState(false);
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
+  const { busy, error, submit } = useSubmit("/api/subscribe", () => setSent(true));
   const dialog = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,9 +100,7 @@ export default function NewsletterModal() {
                   onSubmit={async (e) => {
                     e.preventDefault();
                     if (!agree) return;
-                    const email = new FormData(e.currentTarget).get("email");
-                    const res = await post("/api/subscribe", { email, source: "popup" });
-                    if (!res.error) setSent(true);
+                    await submit({ email: new FormData(e.currentTarget).get("email"), source: "popup" });
                   }}
                 >
                   <label htmlFor="nl-email" className="sr-only">Email address</label>
@@ -112,7 +111,8 @@ export default function NewsletterModal() {
                     </button>
                     I have read and agree to the Privacy Policy and Terms & Conditions.
                   </label>
-                  <button className="btn btn-wine mt-7 w-full disabled:opacity-50" disabled={!agree}>Start watching free</button>
+                  <button className="btn btn-wine mt-7 w-full disabled:opacity-50" disabled={!agree || busy} title={agree ? undefined : "Accept the terms above to continue"}>{busy ? "One moment…" : "Start watching free"}</button>
+                  {error && <p className="mt-3 text-sm text-wine-hot" role="alert">{error}</p>}
                   <p className="mt-4 text-[0.7rem] leading-relaxed text-parchment/60">Free shorts, first looks at new releases and the occasional secret, straight to your inbox. Unsubscribe anytime.</p>
                 </form>
               )}

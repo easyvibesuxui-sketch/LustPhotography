@@ -7,11 +7,11 @@ import Magnetic from "./Magnetic";
 import { useMe } from "@/lib/auth";
 
 const nav = [
+  ["Films", "/browse/?type=film"],
   ["Shorts", "/shorts/"],
   ["Images", "/images/"],
-  ["Muses", "/#muses"],
-  ["Collections", "/#collections"],
-  ["Fantasies", "/#fantasies"],
+  ["Collections", "/collections/"],
+  ["Muses", "/muses/"],
   ["Membership", "/pricing/"],
   ["For Brands", "/#brands"],
   ["For Creators", "/#creators"],

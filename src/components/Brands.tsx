@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { brandPackages, brandWork } from "@/lib/data";
-import { post } from "@/lib/auth";
+import { useSubmit } from "@/lib/useSubmit";
 import ArtFrame from "./ArtFrame";
 import Rail from "./Rail";
 import Reveal from "./Reveal";
@@ -12,14 +12,12 @@ const lbl = "grid gap-2 font-ui text-xs uppercase tracking-[0.18em] text-parchme
 
 export default function Brands() {
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const lead = useSubmit("/api/lead", () => setSent(true));
+  const { busy, error } = lead;
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const f = Object.fromEntries(new FormData(e.currentTarget));
-    const res = await post("/api/lead", { kind: "brand", ...f });
-    if (res.error) setError(res.error);
-    else setSent(true);
+    await lead.submit({ kind: "brand", ...Object.fromEntries(new FormData(e.currentTarget)) });
   };
 
   return (
@@ -136,7 +134,7 @@ export default function Brands() {
                 <textarea name="message" rows={4} className={`${field} resize-none`} placeholder="Product, mood, where it will be used…" />
               </label>
               {error && <p className="text-sm text-wine-hot md:col-span-2" role="alert">{error}</p>}
-              <button className="btn btn-wine md:col-span-2">Send brief</button>
+              <button className="btn btn-wine disabled:opacity-60 md:col-span-2" disabled={busy}>{busy ? "Sending…" : "Send brief"}</button>
             </form>
           )}
         </Reveal>

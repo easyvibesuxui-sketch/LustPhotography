@@ -130,7 +130,7 @@ export default function ReelCard({ reel, variant = reel.kind, onOpen, className 
         </div>
         <div className="relative">
           <button
-            className={`flex h-8 w-8 items-center justify-center rounded-full bg-forest/70 text-lg leading-none text-ivory backdrop-blur transition-opacity hover:bg-brass hover:text-forest ${playing || menu ? "opacity-100" : "opacity-0 focus:opacity-100"}`}
+            className={`flex h-8 w-8 items-center justify-center rounded-full bg-forest/70 text-lg leading-none text-ivory backdrop-blur transition-opacity hover:bg-brass hover:text-forest ${playing || menu ? "opacity-100" : "opacity-0 focus:opacity-100 [@media(hover:none)]:opacity-100"}`}
             aria-label={`More options for ${reel.title}`}
             aria-expanded={menu}
             onClick={() => setMenu((m) => !m)}

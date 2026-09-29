@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { stills, TAGS, type Tag } from "@/lib/data";
 import StillsGrid from "./StillsGrid";
+import PageHead from "./PageHead";
 import TagFilter, { readTag, tagsFor, writeTag } from "./TagFilter";
 import { useMe } from "@/lib/auth";
 
@@ -27,14 +28,12 @@ export default function ImagesGallery() {
 
   return (
     <>
-      <div className="gutter mb-8">
-        <p className="label mb-3">Stills from the studio</p>
-        <h1 className="font-ui text-4xl font-bold uppercase leading-none md:text-6xl">Images</h1>
+      <PageHead eyebrow="Stills from the studio" title="Images" className="mb-8">
         <p className="mt-3 text-parchment/70">
           {list.length} {list.length === 1 ? "image" : "images"}
           {tag && <> tagged <span className="text-brass">#{tag}</span></>}
         </p>
-      </div>
+      </PageHead>
       <TagFilter tags={tags} active={tag} onChange={pick} counts={counts} className="mb-8 md:px-[var(--gutter)]" />
       <StillsGrid key={tag ?? "all"} stills={list.slice(0, shown)} />
       {shown < list.length && (

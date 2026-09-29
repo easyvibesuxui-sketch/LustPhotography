@@ -4,7 +4,7 @@ import ArtFrame from "./ArtFrame";
 
 export default function MuseCard({ m }: { m: Muse }) {
   return (
-    <Link href={`/muse/${m.slug}`} className="group block" data-cursor="Meet">
+    <Link href={`/muse/${m.slug}/`} className="group block" data-cursor="Meet">
       <div className="media aspect-[4/5]" data-sfw>
         <div className="art sepia-[0.7] saturate-[0.7] group-hover:scale-105 group-hover:sepia-0 group-hover:saturate-100">
           <ArtFrame {...m} seed={m.slug} alt={m.name} />

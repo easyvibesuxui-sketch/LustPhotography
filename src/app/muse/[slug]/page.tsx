@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { museBySlug, muses, reels, stills } from "@/lib/data";
+import Link from "next/link";
+import { collections, museBySlug, muses, reels, stills } from "@/lib/data";
 import ArtFrame from "@/components/ArtFrame";
 import ReelCard from "@/components/ReelCard";
 import StillsGrid from "@/components/StillsGrid";
@@ -17,6 +18,7 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
   if (!m) notFound();
   const theirReels = reels.filter((r) => r.muses.includes(m.slug));
   const theirStills = stills.filter((s) => s.muse === m.slug);
+  const theirCollections = collections.filter((c) => theirStills.some((s) => s.collection === c.slug) || theirReels.some((r) => r.collection === c.slug));
 
   return (
     <div>
@@ -25,6 +27,11 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
           <ArtFrame {...m} seed={`${m.slug}-bg`} />
         </div>
         <div className="gutter relative z-10 order-2 pb-16 lg:order-1 lg:pb-0">
+          <nav aria-label="Breadcrumb" className="mb-6 font-ui text-sm font-semibold uppercase tracking-[0.2em] text-parchment/70">
+            <Link href="/muses/" className="hover:text-brass">Muses</Link>
+            <span className="mx-2 text-brass" aria-hidden>/</span>
+            <span className="text-ivory">{m.name}</span>
+          </nav>
           <p className="label mb-4">AI Muse · {m.from}</p>
           <h1 className="font-hero leading-[0.9] tracking-[-0.02em]" style={{ fontSize: "clamp(3.2rem, 8vw, 8.5rem)" }}>
             <SplitText text={m.name} delay={0.2} />
@@ -36,6 +43,18 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
                 <span key={t} className="pill pill-ghost">{t}</span>
               ))}
             </div>
+            {theirCollections.length > 0 && (
+              <div className="mt-8">
+                <p className="label mb-3">Appears in</p>
+                <div className="flex flex-wrap gap-2">
+                  {theirCollections.map((c) => (
+                    <Link key={c.slug} href={`/collection/${c.slug}/`} className="pill pill-wine hover:brightness-110">
+                      {c.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             <p className="mt-8 text-xs text-parchment/50">A fictional adult character created by the Lust Photography studio.</p>
           </Reveal>
         </div>
@@ -51,7 +70,7 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
       {theirReels.length > 0 && (
         <section className="pt-10">
           <h2 className="gutter mb-6 font-display text-4xl font-light md:text-5xl">Reels with {m.name.split(" ")[0]}</h2>
-          <div className="gutter grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+          <div className="gutter grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-8">
             {theirReels.map((r) => (
               <ReelCard key={r.slug} reel={r} className={r.kind === "film" ? "col-span-2" : ""} />
             ))}
@@ -61,8 +80,8 @@ export default async function MusePage({ params }: { params: Promise<{ slug: str
 
       {theirStills.length > 0 && (
         <section className="pt-20">
-          <h2 className="gutter mb-6 font-display text-4xl font-light md:text-5xl">Stills</h2>
-          <StillsGrid stills={theirStills} />
+          <h2 className="gutter mb-6 font-display text-4xl font-light md:text-5xl">Stills · {theirStills.length}</h2>
+          <StillsGrid stills={theirStills} page={24} />
         </section>
       )}
     </div>

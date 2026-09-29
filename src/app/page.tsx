@@ -1,4 +1,4 @@
-import { categories, collections, films, muses, shorts, stills } from "@/lib/data";
+import { categories, collections, films, muses, reels, shorts, stills } from "@/lib/data";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import SectionHead from "@/components/SectionHead";
@@ -51,13 +51,13 @@ export default function Home() {
       </section>
 
       <section id="collections" className="scroll-mt-20 pt-28 md:pt-44">
-        <SectionHead eyebrow="Handpicked" title="Curated Collections">
-          <p className="mt-3 max-w-md text-parchment/75">Hand-picked selections of our most cinematic work.</p>
+        <SectionHead eyebrow="Grouped by setting" title="Collections" href="/collections/">
+          <p className="mt-3 max-w-md text-parchment/75">The dacha, the banya, the promenade — every set in one place.</p>
         </SectionHead>
-        <div className="gutter grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          {collections.map((c, i) => (
-            <Reveal key={c.slug} delay={i * 0.08}>
-              <CollectionTile c={c} />
+        <div className="gutter grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
+          {collections.slice(0, 6).map((c, i) => (
+            <Reveal key={c.slug} delay={(i % 3) * 0.08}>
+              <CollectionTile c={c} count={stills.filter((s) => s.collection === c.slug).length + reels.filter((r) => r.collection === c.slug).length} />
             </Reveal>
           ))}
         </div>
@@ -68,7 +68,7 @@ export default function Home() {
       </div>
 
       <section id="muses" className="scroll-mt-20 pt-28 md:pt-44">
-        <SectionHead eyebrow="Le Muse" title="The muses shaping Lust Photography" href="/browse?type=muse">
+        <SectionHead eyebrow="Le Muse" title="The muses shaping Lust Photography" href="/muses/">
           <p className="mt-4 max-w-2xl text-parchment/75">
             Our cast of AI-imagined characters — each with a story, a city and a signature mood. Every muse is a fictional adult, created in our studio.
           </p>

@@ -9,6 +9,7 @@ export type Badge = "TRENDING" | "NEW" | "FREE";
 
 import { canAccess, imageLevel, LEVEL_TIER, POSTER_LEVEL, VIDEO_LEVEL, type Level, type Tier } from "./tiers";
 import { DIMS } from "./dims";
+import { SETTINGS, nameFor, settingOf, type Setting } from "./taxonomy";
 
 // Public tags. "Nipslip" is Privé-only: hidden from filters for everyone else.
 export const TAGS = ["Au Naturel", "Al Fresco", "Curves", "Petite", "Nipslip"] as const;
@@ -30,6 +31,8 @@ export type Art = {
   posterBlur?: string;
   /** Width ÷ height of the original file, so frames can match it. */
   aspect?: number;
+  /** Media id, e.g. "c03" or "n12". */
+  id?: string;
 };
 
 export type Chapter = { t: string; label: string };
@@ -62,6 +65,8 @@ export type Still = Art & {
   badges: Badge[];
   muse: string;
   category: string;
+  collection?: string;
+  setting?: Setting;
 };
 
 export type Muse = Art & {
@@ -73,7 +78,7 @@ export type Muse = Art & {
 };
 
 export type Category = Art & { slug: string; title: string };
-export type Collection = Art & { slug: string; title: string; subtitle?: string };
+export type Collection = Art & { slug: string; title: string; subtitle?: string; blurb?: string };
 
 // Media lives on a separate adult-friendly CDN (e.g. Bunny.net), not in the repo.
 // Set NEXT_PUBLIC_MEDIA_BASE to its URL; locally it falls back to /public/media.
@@ -87,21 +92,22 @@ const aspectOf = (key: string) => {
 // Full still (Privé) with its blurred teaser.
 const img = (n: number): Partial<Art> => {
   const level = imageLevel(`i${pad(n)}`);
-  return { level, tier: LEVEL_TIER[level], ...aspectOf(`img/i${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/i${pad(n)}.webp`, blur: `${MEDIA}/img/i${pad(n)}.blur.webp` } : {}) };
+  return { id: `i${pad(n)}`, level, tier: LEVEL_TIER[level], ...aspectOf(`img/i${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/i${pad(n)}.webp`, blur: `${MEDIA}/img/i${pad(n)}.blur.webp` } : {}) };
 };
 // Shoulders-up SFW crop of still n — safe for every public surface.
-const crop = (n: number): Partial<Art> => ({ level: "dolce", tier: "public", ...aspectOf(`img/c${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
+const crop = (n: number): Partial<Art> => ({ id: `c${pad(n)}`, level: "dolce", tier: "public", ...aspectOf(`img/c${pad(n)}`), ...(MEDIA ? { src: `${MEDIA}/img/c${pad(n)}.webp` } : {}) });
 // Any image by id (c = Dolce Vita, b = Boudoir, i = Privé); gated ones get a blur teaser.
 const pic = (id: string): Partial<Art> => {
   const level = imageLevel(id);
   const blur = level !== "dolce";
-  return { level, tier: LEVEL_TIER[level], ...aspectOf(`img/${id}`), ...(MEDIA ? { src: `${MEDIA}/img/${id}.webp`, ...(blur ? { blur: `${MEDIA}/img/${id}.blur.webp` } : {}) } : {}) };
+  return { id, level, tier: LEVEL_TIER[level], ...aspectOf(`img/${id}`), ...(MEDIA ? { src: `${MEDIA}/img/${id}.webp`, ...(blur ? { blur: `${MEDIA}/img/${id}.blur.webp` } : {}) } : {}) };
 };
 // Video + poster, each with its own level. `posterOf` borrows another poster (for teaser cuts).
 const vid = (id: string, posterOf = id): Partial<Art> => {
   const level = VIDEO_LEVEL[id] ?? "prive";
   const pl = POSTER_LEVEL[posterOf] ?? "prive";
   return {
+    id,
     level,
     tier: LEVEL_TIER[level],
     posterTier: LEVEL_TIER[pl],
@@ -123,32 +129,43 @@ export function visibleArt<T extends Art>(a: T, have: Tier | undefined): T & { l
 export const categories: Category[] = [
   { slug: "villa-nights", title: "Villa Nights", scene: "villa", tone: "wine", ...pic("c61") },
   { slug: "riviera-summer", title: "Riviera Summer", scene: "riviera", tone: "dusk", ...pic("c27") },
-  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", ...pic("c138") },
+  { slug: "vintage-romance", title: "Vintage Romance", scene: "wine", tone: "terracotta", ...pic("c139") },
   { slug: "golden-hour", title: "Golden Hour", scene: "cypress", tone: "sand", ...pic("c130") },
-  { slug: "linen-silk", title: "Linen & Silk", scene: "linen", tone: "sand", ...pic("c151") },
-  { slug: "noir-italiano", title: "Noir Italiano", scene: "blinds", tone: "noir", ...pic("c51") },
+  { slug: "in-the-park", title: "In the Park", scene: "cypress", tone: "olive", ...pic("c08") },
+  { slug: "linen-silk", title: "Linen & Steam", scene: "linen", tone: "sand", ...pic("c26") },
+  { slug: "noir-italiano", title: "Noir & Studio", scene: "blinds", tone: "noir", ...pic("c51") },
 ];
 
+// Each collection is one setting you can recognise at a glance (see taxonomy.ts).
 export const collections: Collection[] = [
-  { slug: "slow-burn", title: "Slow Burn", subtitle: "For those who savour every second.", scene: "curve", tone: "terracotta", ...pic("c26") },
-  { slug: "inspired-by-cinema", title: "Inspired by Cinema", subtitle: "Cinecittà dreams, 1963.", scene: "blinds", tone: "noir", ...pic("c374") },
-  { slug: "grand-tour", title: "The Grand Tour", subtitle: "Florence to Amalfi, one stolen summer.", scene: "road", tone: "olive", ...pic("c201") },
-  { slug: "from-the-archive", title: "From the Archive", scene: "villa", tone: "sand", ...pic("c199") },
+  { slug: "soviet-village", title: "The Soviet Village", subtitle: "Melons in the boot, a spring in the yard.", blurb: "A dacha summer, 1974: watermelons piled in a Volga, goats at the gate, bare feet in the garden spring and a greenhouse full of tomatoes.", scene: "road", tone: "olive", ...pic("c201") },
+  { slug: "kommunalka", title: "Kommunalka", subtitle: "Geraniums on the sill, laundry in the basin.", blurb: "Shared-flat mornings: bread dough on the table, washing in the enamel basin, the front door left ajar — plus the old library and one very long interview.", scene: "villa", tone: "terracotta", ...pic("c156") },
+  { slug: "river-at-dusk", title: "River at Dusk", subtitle: "Straw hats and horses by the water.", blurb: "The last hour of light on the river: a thin summer dress, a straw hat with a daisy, horses wading behind her.", scene: "riviera", tone: "sand", ...pic("c138") },
+  { slug: "kolkhoz-harvest", title: "Kolkhoz Harvest", subtitle: "Grapes, a headscarf and low sun.", blurb: "Harvest in the collective vineyard — crates of black grapes, a shawl slipping from the shoulder, rows of vines on fire with sunset.", scene: "cypress", tone: "sand", ...pic("c90") },
+  { slug: "steam-and-linen", title: "Steam & Linen", subtitle: "Banya, birch leaves, candlelight.", blurb: "The banya after dark and the spa by candlelight: linen towels, wooden benches and steam catching the light from the window.", scene: "linen", tone: "wine", ...pic("c24") },
+  { slug: "the-garage", title: "The Garage", subtitle: "Grease, chrome and slanting light.", blurb: "A Soviet workshop where she changes her own tyres: oily vests, handprints on the wall, sun cutting through the dust.", scene: "blinds", tone: "noir", ...pic("c147") },
+  { slug: "park-bench", title: "Park Bench", subtitle: "Selfies under the linden trees.", blurb: "Unposed afternoons on the park bench — phone in hand, laughing into the camera while the city walks past.", scene: "cypress", tone: "olive", ...pic("c07") },
+  { slug: "the-promenade", title: "The Promenade", subtitle: "Palms, ink and a seaside bench.", blurb: "Tattoos, lace and friends laughing on the seaside promenade as the sun drops behind the palms.", scene: "riviera", tone: "dusk", ...pic("c221") },
+  { slug: "beach-days", title: "Beach Days", subtitle: "Salt skin and wind in her hair.", blurb: "Sand, surf and a sun that never sets — and one dive into the deep blue.", scene: "riviera", tone: "dusk", ...pic("c22") },
+  { slug: "luna-park", title: "Luna Park", subtitle: "Cotton candy and the coaster.", blurb: "Screaming down the roller coaster, cotton candy on the carousel, hair flying through an open bus window.", scene: "road", tone: "terracotta", ...pic("c213") },
+  { slug: "forest-climb", title: "Forest Climb", subtitle: "Moss, rope and golden light.", blurb: "Climbing the old rock face in the pine forest, sun pouring through the trees.", scene: "cypress", tone: "olive", ...pic("c229") },
+  { slug: "studio-sessions", title: "Studio Sessions", subtitle: "Blue backdrops, black leather, the barre.", blurb: "Staged in the studio: a rider on a painted blue set, dark selfies, a late bar and the ballet barre in slanting light.", scene: "blinds", tone: "noir", ...pic("c374") },
+  { slug: "la-dolce-vita", title: "La Dolce Vita", subtitle: "Silk robes, villas and the green truck.", blurb: "The Italian chapter: villa mornings in silk, nonna's kitchen, a sunlit piazza and a green truck in the hills.", scene: "villa", tone: "sand", ...pic("c61") },
 ];
 
 export const muses: Muse[] = [
-  { slug: "livia-rinaldi", name: "Livia Rinaldi", from: "Firenze", scene: "curve", tone: "terracotta", ...crop(3), bio: "A restorer of old frescoes by day, Livia wears her own art on her skin and moves through sunlit piazzas as if the afternoon belongs only to her.", tags: ["Golden hour", "Ink", "Slow"] },
-  { slug: "aurora-conti", name: "Aurora Conti", from: "Portofino", scene: "riviera", tone: "dusk", ...crop(10), bio: "Sailor, charmer, keeper of a vintage convertible that has never once been on time.", tags: ["Riviera", "Adventure"] },
-  { slug: "serafina-bellini", name: "Serafina Bellini", from: "Siena", scene: "wine", tone: "wine", ...crop(6), bio: "Heiress to a vineyard and to a scandal nobody in Siena will say out loud. Laughs louder than anyone at the table.", tags: ["Old money", "Wine"] },
-  { slug: "mara-vale", name: "Mara Vale", from: "Roma", scene: "blinds", tone: "noir", ...crop(25), bio: "A photographer who prefers shadows to light, and night trains to anything else.", tags: ["Noir", "Cinema"] },
-  { slug: "giada-orsini", name: "Giada Orsini", from: "Amalfi", scene: "riviera", tone: "sand", ...crop(19), bio: "Swims at dawn, sleeps at noon, disappears at dusk.", tags: ["Summer", "Sea"] },
-  { slug: "ottavia-neri", name: "Ottavia Neri", from: "Milano", scene: "villa", tone: "forest", ...crop(24), bio: "A contessa of the old school: gloves, pearls and a very private library.", tags: ["Contessa", "Villa"] },
-  { slug: "lucia-marchetti", name: "Lucia Marchetti", from: "Lucca", scene: "cypress", tone: "olive", ...crop(7), bio: "Tends olive groves, writes letters she never sends.", tags: ["Countryside", "Romance"] },
-  { slug: "beatrice-sole", name: "Beatrice Sole", from: "Capri", scene: "linen", tone: "sand", ...crop(20), bio: "Her name means sun. She takes it seriously.", tags: ["Linen", "Sun"] },
-  { slug: "daria-fiore", name: "Daria Fiore", from: "Venezia", scene: "blinds", tone: "wine", ...crop(23), bio: "A gondola, a mask, a secret — pick any two.", tags: ["Masquerade", "Night"] },
-  { slug: "nives-castellani", name: "Nives Castellani", from: "Val d'Orcia", scene: "road", tone: "terracotta", ...crop(21), bio: "Drives too fast down cypress roads, laughing the whole way.", tags: ["Road trip", "Adventure"] },
-  { slug: "elena-ambrosi", name: "Elena Ambrosi", from: "Napoli", scene: "curve", tone: "olive", ...crop(8), bio: "Nine months of summer, and not a single regret. Mother-to-be, muse forever.", tags: ["Maternity", "Slow"] },
-  { slug: "carlotta-reni", name: "Carlotta Reni", from: "Bologna", scene: "villa", tone: "terracotta", ...crop(9), bio: "Collects keys to rooms she was never invited into.", tags: ["Mystery", "Park"] },
+  { slug: "livia-rinaldi", name: "Livia Rinaldi", from: "The promenade", scene: "curve", tone: "terracotta", ...crop(3), bio: "A restorer of old frescoes by day, Livia wears her own art on her skin and holds court on the seaside promenade until the lamps come on.", tags: ["Ink", "Promenade", "Golden hour"] },
+  { slug: "aurora-conti", name: "Aurora Conti", from: "Luna Park", scene: "riviera", tone: "dusk", ...pic("c124"), bio: "Rides the coaster twice, eats the cotton candy on the second loop and never once holds on.", tags: ["Luna Park", "Adventure"] },
+  { slug: "serafina-bellini", name: "Serafina Bellini", from: "The vineyards", scene: "wine", tone: "wine", ...pic("c90"), bio: "Heiress to a vineyard and to a scandal nobody will say out loud. At harvest she carries the crates herself.", tags: ["Harvest", "Wine"] },
+  { slug: "mara-vale", name: "Mara Vale", from: "The studio", scene: "blinds", tone: "noir", ...pic("c374"), bio: "A photographer who prefers shadows to light — painted backdrops, black leather and the ballet barre after hours.", tags: ["Studio", "Noir"] },
+  { slug: "giada-orsini", name: "Giada Orsini", from: "The beach", scene: "riviera", tone: "sand", ...crop(19), bio: "Swims at dawn, sleeps at noon, disappears at dusk.", tags: ["Summer", "Sea"] },
+  { slug: "ottavia-neri", name: "Ottavia Neri", from: "The villa", scene: "villa", tone: "forest", ...pic("c59"), bio: "A contessa of the old school: silk robes, late breakfasts and a very private library.", tags: ["Contessa", "Villa"] },
+  { slug: "lucia-marchetti", name: "Lucia Marchetti", from: "The dacha", scene: "cypress", tone: "olive", ...pic("c113"), bio: "Tends the dacha garden, feeds the goats at dawn and writes letters she never sends.", tags: ["Countryside", "Garden"] },
+  { slug: "beatrice-sole", name: "Beatrice Sole", from: "The river", scene: "linen", tone: "sand", ...pic("c168"), bio: "Her name means sun. She follows it down to the river every evening.", tags: ["Dusk", "River"] },
+  { slug: "daria-fiore", name: "Daria Fiore", from: "The banya", scene: "blinds", tone: "wine", ...crop(23), bio: "Steam, birch leaves and a secret — pick any two.", tags: ["Steam", "Candlelight"] },
+  { slug: "nives-castellani", name: "Nives Castellani", from: "Garage No. 17", scene: "road", tone: "terracotta", ...pic("c133"), bio: "Fixes her own engine, climbs whatever is in front of her and drives too fast down country roads.", tags: ["Grease", "Adventure"] },
+  { slug: "elena-ambrosi", name: "Elena Ambrosi", from: "Kommunalka No. 7", scene: "curve", tone: "olive", ...pic("c92"), bio: "Keeps a kitchen full of geraniums, a basin of laundry and the best gossip on the stairwell.", tags: ["Kitchen", "Home"] },
+  { slug: "carlotta-reni", name: "Carlotta Reni", from: "The park", scene: "villa", tone: "terracotta", ...crop(9), bio: "Collects keys to rooms she was never invited into — and takes her selfies on the park bench outside.", tags: ["Park", "Selfies"] },
 ];
 
 const ch = (...pairs: [string, string][]): Chapter[] => pairs.map(([t, label]) => ({ t, label }));
@@ -325,6 +342,16 @@ export const reels: Reel[] = [
     director: "Lust Photography", chapters: ch(["0:00", "Open"], ["0:03", "Turn"]), tags: [...tags],
   })),
 ];
+
+// Put every reel where its picture belongs.
+for (const r of reels) {
+  const set = settingOf(r.id);
+  if (!set) continue;
+  const rule = SETTINGS[set];
+  r.collection = rule.collection;
+  r.category = rule.category;
+  r.muses = [rule.muse];
+}
 
 export const films = reels.filter((r) => r.kind === "film");
 export const shorts = reels.filter((r) => r.kind === "short");
@@ -960,7 +987,7 @@ const extraSeeds: [string, string, Still["ratio"], string, string, Tag[]][] = [
   ["Free Hour, No. 602", "i602", "landscape", "giada-orsini", "vintage-romance", ["Au Naturel"]],
 ];
 
-export const stills: Still[] = [
+const rawStills: Still[] = [
   ...dolceSeeds.map(([title, n, muse, category, tags]): Still => ({
     slug: slugify(title), title, ...crop(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio: "landscape", badges: ["FREE"], muse, category, tags,
   })),
@@ -969,8 +996,22 @@ export const stills: Still[] = [
   })),
   ...stillSeeds.map(([title, n, ratio, badges, muse, category, tags]): Still => ({
     slug: slugify(title), title, ...img(n), scene: "linen", tone: toneFor[category] ?? "sand", ratio, badges: badges.filter((b) => b !== "FREE"), muse, category, tags,
-  })),
-];
+  })),];
+
+// Placeholder titles from bulk uploads ("Garden Gate, No. 187") get a name that fits the picture.
+const placeholder = /, No\. \d+$/;
+const seen = new Set<string>();
+export const stills: Still[] = rawStills.map((s) => {
+  const setting = settingOf(s.id);
+  if (!setting) return s;
+  const rule = SETTINGS[setting];
+  const title = placeholder.test(s.title) ? nameFor(setting) : s.title;
+  let slug = slugify(title);
+  while (seen.has(slug)) slug += `-${s.id}`;
+  seen.add(slug);
+  const tags = rule.outdoor && !s.tags.includes("Al Fresco") ? [...s.tags, "Al Fresco" as Tag] : s.tags;
+  return { ...s, title, slug, setting, tags, collection: rule.collection, category: rule.category, muse: rule.muse };
+});
 
 export const fantasies = [
   { by: "lazy_lucia", text: "A borrowed key to a villa that isn't mine, and a whole afternoon to explore it.", reel: "villa-segreta" },

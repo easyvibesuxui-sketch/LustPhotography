@@ -62,22 +62,32 @@ function StillTile({ s, onOpen }: { s: View; onOpen: () => void }) {
   );
 }
 
-export default function StillsGrid({ stills }: { stills: Still[] }) {
+// `page` renders the grid in chunks with a "Show more" button, for long lists.
+export default function StillsGrid({ stills, page }: { stills: Still[]; page?: number }) {
   const [open, setOpen] = useState<number | null>(null);
+  const [shown, setShown] = useState(page ?? Infinity);
   const { me } = useMe();
-  const views = stills.map((s) => visibleArt(s, me?.tier));
+  // What this viewer can open comes first; locked teasers follow.
+  const views = stills.map((s) => visibleArt(s, me?.tier)).sort((a, b) => Number(a.locked) - Number(b.locked));
   // Lightbox walks only what this viewer may see.
   const open_ = views.filter((v) => !v.locked);
   const items = open_.map((s) => ({ ...s, seed: s.slug, caption: museBySlug(s.muse)?.name }));
   return (
     <>
       <div className="gutter columns-2 gap-4 md:columns-3 md:gap-8">
-        {views.map((s, i) => (
+        {views.slice(0, shown).map((s, i) => (
           <Reveal key={s.slug} delay={(i % 4) * 0.08} className="mb-4 break-inside-avoid md:mb-8">
             <StillTile s={s} onOpen={() => setOpen(open_.indexOf(s))} />
           </Reveal>
         ))}
       </div>
+      {shown < views.length && (
+        <div className="mt-12 flex justify-center">
+          <button className="btn btn-brass" onClick={() => setShown((n) => n + (page ?? 24))}>
+            Show more · {views.length - shown}
+          </button>
+        </div>
+      )}
       {open !== null && <Lightbox items={items} index={open} onClose={() => setOpen(null)} />}
     </>
   );

@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { categories, collections, muses, reels, stills, museBySlug } from "@/lib/data";
 import ReelCard, { FilmTile } from "./ReelCard";
 import StillsGrid from "./StillsGrid";
 import MuseCard from "./MuseCard";
+import PageHead from "./PageHead";
 
 const types = [
   ["all", "Everything"],
@@ -37,6 +38,12 @@ export default function Browse() {
     router.replace(`/browse?${p.toString()}`, { scroll: false });
   };
 
+  // Focus the search box on desktop only: on phones it would pop the keyboard over the page.
+  const search = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(pointer: fine)").matches) search.current?.focus();
+  }, []);
+
   const match = (s: string) => !q || s.toLowerCase().includes(q);
 
   const list = useMemo(() => {
@@ -53,7 +60,7 @@ export default function Browse() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, category, collection, q, sort]);
 
-  const imgs = stills.filter((s) => (type === "all" || type === "image") && !collection && (!category || s.category === category) && match(s.title + " " + museBySlug(s.muse)?.name));
+  const imgs = stills.filter((s) => (type === "all" || type === "image") && (!collection || s.collection === collection) && (!category || s.category === category) && match(s.title + " " + museBySlug(s.muse)?.name));
   const people = muses.filter((m) => (type === "all" || type === "muse") && !category && !collection && match(m.name + " " + m.tags.join(" ") + " " + m.from));
   const films = list.filter((r) => r.kind === "film");
   const shorts = list.filter((r) => r.kind === "short");
@@ -64,9 +71,7 @@ export default function Browse() {
 
   return (
     <div>
-      <div className="gutter">
-        <p className="label mb-3">The archive</p>
-        <h1 className="font-display text-5xl font-light md:text-7xl">{heading}</h1>
+      <PageHead eyebrow="The archive" title={heading}>
         <label className="mt-8 flex max-w-xl items-center gap-3 border-b border-brass/40 pb-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-brass" aria-hidden>
             <circle cx="11" cy="11" r="7" />
@@ -78,10 +83,11 @@ export default function Browse() {
             onChange={(e) => set("q", e.target.value)}
             placeholder="Search reels, muses, moods…"
             className="w-full bg-transparent font-display text-2xl italic placeholder:text-parchment/40 focus:outline-none"
-            autoFocus
+            ref={search}
+            type="search"
           />
         </label>
-      </div>
+      </PageHead>
 
       <div className="gutter rail mt-8 flex gap-2 overflow-x-auto pb-1">
         {types.map(([v, l]) => (
@@ -125,7 +131,7 @@ export default function Browse() {
       {imgs.length > 0 && (
         <section className="mt-12">
           <h2 className="gutter label mb-4">Images · {imgs.length}</h2>
-          <StillsGrid stills={imgs} />
+          <StillsGrid key={`${category}-${collection}-${q}`} stills={imgs} page={24} />
         </section>
       )}
       {people.length > 0 && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import type { Art } from "@/lib/data";
 import ArtFrame from "./ArtFrame";
@@ -13,17 +13,31 @@ export default function Lightbox({ items, index, onClose }: { items: LightItem[]
   const [i, setI] = useState(index);
   const go = (d: number) => setI((v) => (v + d + items.length) % items.length);
 
+  const close = useRef<HTMLButtonElement>(null);
   useEffect(() => {
+    // Move focus into the dialog, keep Tab inside it, and give it back on close.
+    const prev = document.activeElement as HTMLElement | null;
+    close.current?.focus();
     lockScroll(true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") go(1);
       if (e.key === "ArrowLeft") go(-1);
+      if (e.key === "Tab") {
+        const box = close.current?.closest("[role=dialog]");
+        const f = box ? [...box.querySelectorAll<HTMLElement>("button")] : [];
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) (e.preventDefault(), last.focus());
+        else if (!e.shiftKey && document.activeElement === last) (e.preventDefault(), first.focus());
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
       lockScroll(false);
+      prev?.focus();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -33,7 +47,7 @@ export default function Lightbox({ items, index, onClose }: { items: LightItem[]
   const nav = "absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-brass/40 bg-forest/70 text-2xl text-ivory backdrop-blur hover:bg-brass hover:text-forest";
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#050907]/95 p-4 backdrop-blur-md md:p-12" role="dialog" aria-modal="true" aria-label={item.title} onClick={onClose}>
-      <button className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-brass/40 text-xl hover:bg-brass hover:text-forest" onClick={onClose} aria-label="Close">
+      <button ref={close} className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-brass/40 text-xl hover:bg-brass hover:text-forest" onClick={onClose} aria-label="Close">
         <CloseIcon />
       </button>
       <button className={`${nav} left-3 md:left-8`} onClick={(e) => (e.stopPropagation(), go(-1))} aria-label="Previous image">‹</button>
