@@ -1426,3 +1426,5 @@ vid/n31.mp4
 vid/n31.jpg
 vid/n31.blur.webp
 img/c638.webp
+img/i719.webp
+img/i719.blur.webp

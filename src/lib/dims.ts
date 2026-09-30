@@ -732,6 +732,7 @@ export const DIMS: Record<string, [number, number]> = {
   "img/b716": [720, 1280],
   "img/i717": [1280, 720],
   "img/c718": [720, 1280],
+  "img/i719": [720, 1280],
   "vid/d01": [400, 736],
   "vid/f01": [1280, 720],
   "vid/n01": [720, 1280],
