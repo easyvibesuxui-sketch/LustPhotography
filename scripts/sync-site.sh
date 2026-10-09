@@ -5,8 +5,8 @@ set -e
 cd "$(dirname "$0")/.."
 STATE=.site-sync.sha
 touch "$STATE"
-find out -type f ! -path 'out/media/*' -print0 | xargs -0 sha1sum | sed 's#  out/#  #' | sort -k2 > .site-sync.new
-comm -13 "$STATE" .site-sync.new | awk '{print $2}' > .site-sync.todo
+find out -type f ! -path 'out/media/*' -print0 | xargs -0 sha1sum | sed 's#  out/#  #' | LC_ALL=C sort > .site-sync.new
+LC_ALL=C comm -13 "$STATE" .site-sync.new | awk '{print $2}' > .site-sync.todo
 echo "$(wc -l < .site-sync.todo) files to upload"
 put() {
   if npx wrangler r2 object put "lust-media/site/$1" --file "out/$1" --remote >/dev/null 2>&1; then echo ok; else echo "FAIL $1" >&2; echo fail; fi

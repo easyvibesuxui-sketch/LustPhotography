@@ -4,6 +4,11 @@
   "name": "lust-photography",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "lustyphotography.com", "custom_domain": true },
+    { "pattern": "www.lustyphotography.com", "custom_domain": true }
+  ],
   "d1_databases": [
     { "binding": "DB", "database_name": "lust-db", "database_id": "22adad90-e68b-40cf-b015-8ece3f011367" }
   ],
