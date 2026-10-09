@@ -7,7 +7,7 @@ import { SCENE_OF } from "./scenes";
 export type Setting =
   | "dacha" | "kommunalka" | "library" | "interview" | "banya" | "spa" | "garage" | "kolkhoz" | "river"
   | "parco" | "piazza" | "promenade" | "beach" | "sea" | "lunapark" | "bus" | "climb" | "studio" | "ballet"
-  | "villa" | "nonna" | "truck" | "storm" | "auto";
+  | "villa" | "nonna" | "truck" | "storm" | "auto" | "cafe";
 
 type Rule = { collection: string; category: string; muse: string; outdoor: boolean; names: string[] };
 
@@ -35,6 +35,7 @@ export const SETTINGS: Record<Setting, Rule> = {
   ballet: { collection: "studio-sessions", category: "noir-italiano", muse: "mara-vale", outdoor: false, names: ["At the Barre"] },
   villa: { collection: "la-dolce-vita", category: "villa-nights", muse: "ottavia-neri", outdoor: false, names: ["Villa Morning", "Silk Robe", "Window Light", "Terrace"] },
   nonna: { collection: "la-dolce-vita", category: "villa-nights", muse: "carlotta-reni", outdoor: false, names: ["Nonna's Kitchen"] },
+  cafe: { collection: "la-dolce-vita", category: "villa-nights", muse: "livia-rinaldi", outdoor: false, names: ["Caffè", "Corner Table", "Espresso Hour", "Dinner for One", "Candle & Glass", "Late Table"] },
   truck: { collection: "la-dolce-vita", category: "golden-hour", muse: "nives-castellani", outdoor: true, names: ["The Green Truck"] },
 };
 
@@ -45,7 +46,7 @@ const VIDEO_SETTING: Record<string, Setting> = {
   n09: "nonna", n10: "villa", n11: "parco", n12: "villa", n13: "villa", n14: "villa", n15: "villa", n16: "villa",
   n17: "villa", n18: "parco", n19: "parco", n20: "parco", n21: "beach", n22: "beach", n23: "beach", n24: "beach",
   n25: "beach", n26: "studio", n27: "beach", n28: "beach", d01: "beach", d02: "beach", d03: "beach", d04: "beach",
-  s09: "villa", n29: "auto", n30: "auto", n31: "dacha", s12: "villa", s13: "beach", s14: "beach", s16: "beach",
+  s09: "villa", n29: "auto", n30: "auto", n31: "dacha", n32: "parco", n33: "parco", n34: "parco", n35: "parco", n36: "parco", n37: "parco", n38: "parco", n39: "parco", n40: "parco", n41: "cafe", n42: "cafe", n43: "cafe", n44: "cafe", n45: "dacha", n46: "villa", n47: "dacha", n48: "parco", n49: "parco", n50: "dacha", n51: "cafe", n52: "villa", n53: "parco", n54: "parco", n55: "parco", n56: "parco", s12: "villa", s13: "beach", s14: "beach", s16: "beach",
 };
 
 export const settingOf = (id?: string): Setting | undefined =>
