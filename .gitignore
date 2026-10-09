@@ -8,3 +8,4 @@ next-env.d.ts
 media-inbox
 public/media
 .wrangler
+.site-sync.*

@@ -22,7 +22,7 @@ export default function AgeGate() {
 
   const enter = () => {
     try {
-      localStorage.setItem("lp-age", "ok");
+      sessionStorage.setItem("lp-age", "ok");
     } catch {}
     document.documentElement.dataset.age = "ok";
     lockScroll(false);

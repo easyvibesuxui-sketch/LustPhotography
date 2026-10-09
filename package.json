@@ -9,7 +9,7 @@
     "lint": "tsc --noEmit",
     "media:upload": "node scripts/upload-media.mjs",
     "media:fetch": "node scripts/fetch-media.mjs",
-    "deploy:cf": "NEXT_PUBLIC_MEDIA_BASE=/media next build && rm -rf out/media && wrangler deploy"
+    "deploy:cf": "NEXT_PUBLIC_MEDIA_BASE=/media next build && rm -rf out/media && scripts/sync-site.sh && wrangler deploy"
   },
   "dependencies": {
     "lenis": "^1.3.26",

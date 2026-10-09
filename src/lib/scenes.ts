@@ -106,4 +106,5 @@ export const SCENE_OF: Record<string, string> = {
   b705: "dacha", b706: "dacha", c707: "dacha", c708: "dacha", c709: "dacha", i710: "dacha", c711: "dacha",
   c712: "dacha", i713: "dacha", b714: "dacha", i715: "dacha", b716: "dacha", i717: "dacha", c718: "dacha",
   i719: "auto",
+  i720: "parco", i721: "parco", b722: "dacha", b723: "dacha",
 };

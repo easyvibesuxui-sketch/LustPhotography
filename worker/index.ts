@@ -1,9 +1,8 @@
-// Lust Photography Worker: serves the static site, a small auth/API layer on
-// D1, and media from R2 gated by membership tier.
+// Lust Photography Worker: serves the static site (from R2, under site/), a small
+// auth/API layer on D1, and media from R2 gated by membership tier.
 import { canAccess, tierForMedia, type Tier } from "../src/lib/tiers";
 
 interface Env {
-  ASSETS: Fetcher;
   DB: D1Database;
   MEDIA: R2Bucket;
 }
@@ -151,8 +150,6 @@ async function api(req: Request, env: Env, path: string): Promise<Response> {
   return json({ error: "Not found" }, 404);
 }
 
-const TYPES: Record<string, string> = { webp: "image/webp", jpg: "image/jpeg", mp4: "video/mp4" };
-
 async function media(req: Request, env: Env, key: string): Promise<Response> {
   if (!/^(img|vid)\/[a-z0-9]+(\.blur)?\.(webp|jpg|mp4)$/.test(key)) return new Response("Not found", { status: 404 });
   const need = tierForMedia(key);
@@ -194,6 +191,40 @@ async function media(req: Request, env: Env, key: string): Promise<Response> {
   return new Response(req.method === "HEAD" ? null : obj.body, { status: 200, headers });
 }
 
+// Static export lives in R2 at site/<path>; directories resolve to index.html.
+const TYPES: Record<string, string> = {
+  html: "text/html; charset=utf-8", js: "text/javascript", css: "text/css", json: "application/json", txt: "text/plain; charset=utf-8",
+  svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", webp: "image/webp", ico: "image/x-icon", woff2: "font/woff2", mp3: "audio/mpeg", mp4: "video/mp4",
+};
+
+async function site(req: Request, env: Env, pathname: string): Promise<Response> {
+  if (req.method !== "GET" && req.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
+  let path = decodeURIComponent(pathname).replace(/^\/+/, "");
+  if (path.includes("..")) return new Response("Bad request", { status: 400 });
+  const candidates = path === "" || path.endsWith("/") ? [`${path}index.html`] : /\.[a-z0-9]+$/i.test(path) ? [path] : [`${path}/index.html`, `${path}.html`];
+  for (const key of candidates) {
+    const obj = await env.MEDIA.get(`site/${key}`);
+    if (!obj) continue;
+    // Pages are linked with a trailing slash; send bare directory URLs there.
+    if (key.endsWith("/index.html") && !path.endsWith("/") && path !== "") {
+      const url = new URL(req.url);
+      url.pathname = `/${path}/`;
+      return Response.redirect(url.toString(), 308);
+    }
+    return fileResponse(req, obj, key, 200);
+  }
+  const nf = await env.MEDIA.get("site/404.html");
+  return nf ? fileResponse(req, nf, "404.html", 404) : new Response("Not found", { status: 404 });
+}
+
+function fileResponse(req: Request, obj: R2ObjectBody, key: string, status: number) {
+  const ext = key.split(".").pop()!.toLowerCase();
+  const headers = new Headers({ "content-type": TYPES[ext] ?? "application/octet-stream", etag: obj.httpEtag });
+  headers.set("cache-control", key.startsWith("_next/static/") ? "public, max-age=31536000, immutable" : ext === "html" || ext === "txt" ? "no-cache" : "public, max-age=3600");
+  if (status === 200 && req.headers.get("if-none-match") === obj.httpEtag) return new Response(null, { status: 304, headers });
+  return new Response(req.method === "HEAD" ? null : obj.body, { status, headers });
+}
+
 export default {
   async fetch(req, env): Promise<Response> {
     const { pathname } = new URL(req.url);
@@ -204,6 +235,6 @@ export default {
       console.error(e);
       return json({ error: "Something went wrong." }, 500);
     }
-    return env.ASSETS.fetch(req);
+    return site(req, env, pathname);
   },
 } satisfies ExportedHandler<Env>;

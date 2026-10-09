@@ -1107,6 +1107,10 @@ const extraSeeds: [string, string, Still["ratio"], string, string, Tag[]][] = [
   ["Au Naturel, No. 717", "i717", "landscape", "serafina-bellini", "villa-nights", ["Au Naturel"]],
   ["Dacha Afternoon, No. 718", "c718", "portrait", "mara-vale", "riviera-summer", []],
   ["Citroën, 1976", "i719", "portrait", "ottavia-neri", "villa-nights", ["Au Naturel"]],
+  ["Park Bench, No. 720", "i720", "portrait", "carlotta-reni", "in-the-park", ["Au Naturel", "Curves"]],
+  ["Park Bench, No. 721", "i721", "portrait", "carlotta-reni", "in-the-park", ["Au Naturel", "Curves"]],
+  ["Dacha, No. 722", "b722", "portrait", "lucia-marchetti", "vintage-romance", []],
+  ["Dacha, No. 723", "b723", "portrait", "lucia-marchetti", "vintage-romance", ["Curves"]],
 ];
 
 const rawStills: Still[] = [
