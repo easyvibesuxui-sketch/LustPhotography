@@ -1138,8 +1138,6 @@ img/i636.webp
 img/i636.blur.webp
 img/i637.webp
 img/i637.blur.webp
-img/b638.webp
-img/b638.blur.webp
 img/i639.webp
 img/i639.blur.webp
 img/i640.webp

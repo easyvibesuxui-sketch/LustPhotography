@@ -595,7 +595,6 @@ export const DIMS: Record<string, [number, number]> = {
   "img/i635": [720, 1280],
   "img/i636": [720, 1280],
   "img/i637": [720, 1280],
-  "img/b638": [720, 1280],
   "img/c638": [720, 1280],
   "img/i639": [720, 1280],
   "img/i640": [720, 1280],
