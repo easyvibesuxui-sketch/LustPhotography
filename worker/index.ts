@@ -139,6 +139,19 @@ async function api(req: Request, env: Env, path: string): Promise<Response> {
         .run();
       return json({ ok: true });
     }
+    case "/api/report": {
+      const kinds = ["underage", "likeness", "nonconsensual", "copyright", "privacy", "billing", "other"];
+      if (typeof b.kind !== "string" || !kinds.includes(b.kind)) return json({ error: "Choose what the report is about." }, 400);
+      const details = typeof b.details === "string" ? b.details.trim().slice(0, 4000) : "";
+      if (details.length < 10) return json({ error: "Please describe the problem in a sentence or two." }, 400);
+      const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+      if (email && !validEmail(email)) return json({ error: "Enter a valid email, or leave it empty." }, 400);
+      const url = typeof b.url === "string" ? b.url.trim().slice(0, 500) || null : null;
+      await env.DB.prepare("INSERT INTO reports (kind, email, url, details, status, created_at) VALUES (?, ?, ?, ?, 'new', ?)")
+        .bind(b.kind, email || null, url, details, now())
+        .run();
+      return json({ ok: true });
+    }
     case "/api/waitlist": {
       const u = await currentUser(req, env);
       if (!u) return json({ error: "Sign in first." }, 401);

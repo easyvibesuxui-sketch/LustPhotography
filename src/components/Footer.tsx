@@ -9,7 +9,7 @@ const slogan = "La Dolce Lussuria";
 
 const groups: [string, [string, string][]][] = [
   ["This is Lust Photography", [["Films", "/browse/?type=film"], ["Shorts", "/shorts/"], ["Images", "/images/"], ["Collections", "/collections/"], ["Muses", "/muses/"], ["Fantasies", "/#fantasies"], ["For Brands", "/#brands"], ["For Creators", "/#creators"]]],
-  ["FAQ, Contact & Legal", [["Contact", "/#creators"], ["Privacy Policy", "#"], ["Cookies Policy", "#"], ["Terms & Conditions", "#"], ["Billing Support", "#"], ["Compliance Statement", "#"], ["Complaints & Content Removal", "#"], ["Anti-Trafficking Statement", "#"]]],
+  ["FAQ, Contact & Legal", [["Contact", "/legal/complaints/"], ["Privacy Policy", "/legal/privacy/"], ["Cookies Policy", "/legal/cookies/"], ["Terms & Conditions", "/legal/terms/"], ["Billing Support", "/legal/billing/"], ["Compliance Statement", "/legal/compliance/"], ["Complaints & Content Removal", "/legal/complaints/"], ["Anti-Trafficking Statement", "/legal/anti-trafficking/"]]],
 ];
 
 const socials = [
@@ -100,7 +100,7 @@ export default function Footer() {
               <input id="footer-email" name="email" type="email" required placeholder="Your email address" className="mt-5 w-full rounded-sm border border-ivory/20 bg-forest/80 px-4 py-3.5 text-sm placeholder:text-parchment/50 focus:border-brass focus:outline-none" />
               <label className="mt-3 flex items-center gap-2.5 text-xs text-parchment/80">
                 <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="h-4 w-4 accent-[var(--color-brass)]" required />
-                I accept the <a href="#" className="underline underline-offset-2">terms and conditions</a>.
+                I accept the <Link href="/legal/terms/" className="underline underline-offset-2">terms and conditions</Link>.
               </label>
               <button className="btn btn-wine mt-5 w-full disabled:opacity-60" disabled={busy}>{busy ? "One moment…" : "Watch for free"}</button>
               {error && <p className="mt-3 text-sm text-wine-hot" role="alert">{error}</p>}

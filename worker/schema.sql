@@ -39,3 +39,13 @@ CREATE TABLE IF NOT EXISTS leads (
   message TEXT,
   created_at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS reports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,
+  email TEXT,
+  url TEXT,
+  details TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new',
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS reports_status ON reports(status, created_at);
